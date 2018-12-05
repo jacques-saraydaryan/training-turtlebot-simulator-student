@@ -1,0 +1,7 @@
+robot_radius: 0.20
+map_type: voxel
+
+static_layer:
+  enabled:              true
+  
+

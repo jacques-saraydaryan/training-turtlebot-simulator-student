@@ -1,0 +1,21 @@
+<package>
+  <name>turtlebot_description_gazebo</name>
+  <version>2.2.3</version>
+  <description>Gazebo description and worlds for TurtleBot simulation</description>
+  <maintainer email="marcus.liebhardt@yujinrobot.com">Marcus Liebhardt</maintainer>
+  <license>BSD</license>
+  <url type="website">http://ros.org/wiki/turtlebot_gazebo</url>
+  <url type="repository">https://github.com/turtlebot/turtlebot_simulator</url>
+  <url type="bugtracker">https://github.com/turtlebot/turtlebot_simulator/issues</url>
+  <author email="jsa@jsa.com">Willow Garage</author>
+
+  <buildtool_depend>catkin</buildtool_depend>
+  
+  <build_depend>urdf</build_depend>
+  <build_depend>xacro</build_depend>
+
+  <run_depend>urdf</run_depend>
+  <run_depend>xacro</run_depend>
+  <run_depend>kobuki_description</run_depend>
+  <run_depend>create_description</run_depend>
+</package>

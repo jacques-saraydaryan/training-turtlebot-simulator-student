@@ -1,0 +1,7 @@
+global_costmap:
+   update_frequency: 2.5
+   publish_frequency: 2.0
+   transform_tolerance: 0.5
+   plugins:
+     - {name: static_layer,            type: "costmap_2d::StaticLayer"}
+
