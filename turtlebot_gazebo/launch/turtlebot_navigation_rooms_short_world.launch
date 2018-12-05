@@ -13,7 +13,7 @@
     <arg name="gui" value="$(arg gui)" />
     <!-- <arg name="world_name" value="$(arg world_file)"/> -->
 
-    <arg name="world_name" value="$(find turtlebot_gazebo)/worlds/Room.world"/>
+    <arg name="world_name" value="$(find turtlebot_gazebo)/worlds/navigation-rooms-indigo-v1.world"/>
   </include>
 
   <include file="$(find turtlebot_gazebo)/launch/includes/$(arg base).launch.xml">
