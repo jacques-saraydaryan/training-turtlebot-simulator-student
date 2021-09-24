@@ -84,13 +84,13 @@ For each different env. configuration the following parameters have to be update
 - Update your **nav_loop.py** file with the following point 
 
 - the point A :
-```json
+```
 {'header':{'frame_id':'map'},'pose':{'position':{'x':-14.666,'y':-5.168},'orientation':{'z':0,'w':1}}}
 ```
 
   - the point B :
 
-```json
+```
 {'header':{'frame_id':'map'},'pose':{'position':{'x':-9.4343,'y':-5.526},'orientation':{'z':1,'w':0}}}
 ```
 
@@ -118,13 +118,13 @@ For each different env. configuration the following parameters have to be update
 - Update your **nav_loop.py** file with the following point 
 
 - the point A :
-```json
+```
 {'header':{'frame_id':'map'},'pose':{'position':{'x':-0.1222,'y':-5.526},'orientation':{'z':0,'w':1}}}
 ```
 
   - the point B :
 
-```json
+```
 {'header':{'frame_id':'map'},'pose':{'position':{'x':6.45,'y':-5.526},'orientation':{'z':1,'w':0}}}
 ```
 - Restore your DWA initial configuration
@@ -154,13 +154,13 @@ For each different env. configuration the following parameters have to be update
 - Update your **nav_loop.py** file with the following point 
 
 - the point A :
-```json
+```
 {'header':{'frame_id':'map'},'pose':{'position':{'x':-15.513,'y':1.743},'orientation':{'z':0,'w':1}}}
 ```
 
   - the point B :
 
-```json
+```
 {'header':{'frame_id':'map'},'pose':{'position':{'x':-11.982,'y':1.743},'orientation':{'z':1,'w':0}}}
 ```
 - Restore your DWA initial configuration
@@ -192,13 +192,13 @@ For each different env. configuration the following parameters have to be update
 - Update your **nav_loop.py** file with the following point 
 
 - the point A :
-```json
+```
 {'header':{'frame_id':'map'},'pose':{'position':{'x':-2.72,'y':-5.23},'orientation':{'z':1,'w':0}}}
 ```
 
   - the point B :
 
-```json
+```
 {'header':{'frame_id':'map'},'pose':{'position':{'x':-6.181,'y':-5.526},'orientation':{'z':0,'w':1}}}
 ```
 - Restore your DWA initial configuration
@@ -221,23 +221,7 @@ For each different env. configuration the following parameters have to be update
 
 - Tips: try to update also the parameter **sim_time** (e.g 5.0) and test again your configurations.
 
-- FInd the optimal parameter configuration for this situation
-
-
-
-start with all optimisation weight to 1 (global_distance_biais,path_distance_biais,occdist_scale,twinling_scale)
-start with simte_time = 1
-Do not touch other param
-test without gloabl path + obsctale in map (already in global cost map)
-
-same test with door
-
-same tests with unknown obstable in zone
-  - simple 1
-  - 2 close
-  - 3 3 concave
-
-
+- Find the optimal parameter configuration for this situation
 
 
 ## 5. Play with TED Local Planner
