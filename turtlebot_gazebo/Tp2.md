@@ -78,6 +78,10 @@ For each different env. configuration the following parameters have to be update
 - In the following window, select only **DWAPlannerROS**
 - all presented parameters can be modified and modifications are automatically apply to the current planner
 
+The planner would be tested into the following areas:
+
+<img src="./imgs/DWALocalPlannerV1.png" alt="Front application Bahvior" width="600"/>
+
 ### 4.1 Simple known Obstacle Avoidance
 - **Into gazebo**, teleport your robot into the room A
 - **Into rviz**,  update the **2D estimate pose** of the robot to fit the environment
