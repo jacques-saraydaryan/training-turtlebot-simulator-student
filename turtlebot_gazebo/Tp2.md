@@ -52,12 +52,12 @@ roscd turtlebot_gazebo/scripts
 2. Create the **nav_loop.py** 
 3. Complete this file such as the created node user naviagation action to send a goal and check if the goal is reached or not (follow the recommandation here http://wiki.ros.org/navigation/Tutorials/SendingSimpleGoals)
 4. the point A should have the following configuration
-```json
+```
 {'header':{'frame_id':'map'},'pose':{'position':{'x':-0.1222,'y':-5.526},'orientation':{'z':0,'w':1}}}
 ```
 
 5. the point B should have the following configuration
-```json
+```
 {'header':{'frame_id':'map'},'pose':{'position':{'x':6.45,'y':-5.526},'orientation':{'z':1,'w':0}}}
 ```
 
