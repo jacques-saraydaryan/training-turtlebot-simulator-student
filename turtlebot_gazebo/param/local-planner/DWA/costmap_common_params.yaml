@@ -1,0 +1,49 @@
+robot_radius: 0.20
+map_type: voxel
+
+static_layer:
+  enabled:              true
+  
+
+inflation_layer:
+  enabled:              true
+  cost_scaling_factor:  5
+  inflation_radius:     0.5
+
+  #New section
+obstacle_layer:
+  enabled:              true
+  combination_method:   1
+
+  #ObstacleCostmapPlugin
+  track_unknown_space:  true    
+
+  #VoxelCostmapPlugin
+  origin_z: 0.0         
+  z_resolution: 0.2     
+  z_voxels: 10  
+  unknown_threshold:    15  
+  mark_threshold:       0
+  publish_voxel_map: false  
+
+  #Sensor management parameter
+  max_obstacle_height:  2.5
+  obstacle_range: 5.0  
+  raytrace_range: 5.0  
+  observation_sources: scan  
+
+  #Observation sources
+  scan:
+    data_type: LaserScan
+    topic: /laserscan
+    marking: true  
+    clearing: true  
+    min_obstacle_height: 0.25  
+    max_obstacle_height: 1.45
+
+
+#New section
+inflation_local_layer:
+  enabled:              true
+  cost_scaling_factor:  5  
+  inflation_radius:     0.3
