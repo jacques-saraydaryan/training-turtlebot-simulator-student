@@ -234,6 +234,21 @@ coming soon...
 ## 6. Create your own local Planner
 coming soon...
 
+## 7. Gazebo Tips:
+Depending of your configuration, some parameters should be ajusted to get the current world correctly running.
+- Click on **physics** field:
+
+<img src="./imgs/Gazebo-Optim-marked.png" alt="Gazebo Tips" width="600"/>
+
+- You can play with 2 criteria to optimize gazebo behavior
+  - **real time update rate** :  parameter specifies in Hz the number of physics updates that will be attempted per second. If this number is set to zero, it will run as fast as it can.
+  - **max step size** :  specifies the time duration in seconds of each physics update step.
+
+  (more information is available at [http://gazebosim.org/tutorials/?tut=modifying_world](http://gazebosim.org/tutorials/?tut=modifying_world)
+
+
+  
+
 
 
 
