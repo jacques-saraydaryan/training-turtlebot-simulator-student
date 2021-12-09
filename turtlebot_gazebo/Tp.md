@@ -117,7 +117,7 @@ rosservice call /move_base/make_plan "start:
     stamp:
       secs: 0
       nsecs: 0
-    frame_id: '/map'
+    frame_id: 'map'
   pose:
     position:
       x: -4.16
@@ -134,7 +134,7 @@ goal:
     stamp:
       secs: 0
       nsecs: 0
-    frame_id: '/map'
+    frame_id: 'map'
   pose:
     position:
       x: -4.0
