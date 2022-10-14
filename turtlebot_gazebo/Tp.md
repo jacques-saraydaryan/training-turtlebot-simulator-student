@@ -1,6 +1,6 @@
 # ROS Navigation Tutorial
 
-## 1. Introduction
+## 0. Introduction
 
 The following document presents an incremental overview of the different ROS configuration files and parameters used in Ros Navigation Package.
 Before starting have a look to the following resources:
@@ -8,6 +8,54 @@ Before starting have a look to the following resources:
  - ROS [costmap_2d](http://wiki.ros.org/costmap_2d) package
  - ROS wiki page of [Basic Navigation Tuning Guide](http://wiki.ros.org/navigation/Tutorials/Navigation%20Tuning%20Guide)
  - The excellent ROS navigation tuning guide providing by Kaiyu Zheng [here](http://kaiyuzheng.me/documents/navguide.pdf)
+
+## 1. Start Simulation and Mapping
+### 1.1. Start simulator for mapping
+- Follow the instructions provided in the section **Start Simlation for mapping** of the [readme.md](./readme.md).
+### 1.2. Configure Rviz 
+- Configure Rviz to see the following:
+  - Map generated (topic `/map`)
+  - Laser information (topic `/laserscan`)
+    - `Style`: Boxes
+    - `Size`: 0.07
+    - `Color Transformer`: FlatColor
+    - `Color`: 255; 0; 0
+  - Kinect "Laser" information (topic `/kinect_scan`)
+    - `Style`: Boxes
+    - `Size`: 0.1
+    - `Color Transformer`: FlatColor
+    - `Color`: 252; 175; 62
+### 1.3 Map the environment
+  - Begin to map the environment with the teleop
+  - What happened when the robot move ? Why ?
+  - Remember how the map is built (behaviour of affordance map)
+  - What happened when your robot tries to map a long corridor ? Explain
+
+### 1.4 Map files
+  - After mapping some rooms, save your map with the following command:
+
+  ```
+    rosrun map_server map_saver -f myMap
+
+  ```
+  - 2 files are generated:
+    - `myMap.yaml`
+    - `myMap.pgm`
+  
+  - Open the myMap.yaml and explain each lines
+
+### 1.5 Change observation source
+  - Stop your gmapping node
+  - Uncomment the following line in the `gmapping_demo.launch` file
+  ```xml
+    <arg name="scan_topic"  default="kinect_scan" />
+  ```
+  - This line changes the observation source from laser to kinect "laser"
+  - Start again your gmapping node and try to map the environment
+  - What do you observe ? Why ?
+
+### 1.6 ref
+  - [http://wiki.ros.org/map_server](http://wiki.ros.org/map_server)
 
 
 ## 2. Start simulation env.
