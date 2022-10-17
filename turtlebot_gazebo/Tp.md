@@ -9,6 +9,8 @@ Before starting have a look to the following resources:
  - ROS wiki page of [Basic Navigation Tuning Guide](http://wiki.ros.org/navigation/Tutorials/Navigation%20Tuning%20Guide)
  - The excellent ROS navigation tuning guide providing by Kaiyu Zheng [here](http://kaiyuzheng.me/documents/navguide.pdf)
 
+<img src="http://wiki.ros.org/navigation/Tutorials/RobotSetup?action=AttachFile&do=get&target=overview_tf.png" alt="ROS1 Navigation Stack" width="600"/>
+
 ## 1. Start Simulation and Mapping
 ### 1.1. Start simulator for mapping
 - Follow the instructions provided in the section **Start Simlation for mapping** of the [readme.md](./readme.md).
