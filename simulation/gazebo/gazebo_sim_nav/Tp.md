@@ -15,7 +15,7 @@ Most of navigation concepts come from ROS1 also have a look to
 
 - A Complete introduction is also available here
 
-<iframe width="560" height="315" src="https://www.youtube.com/embed/QB7lOKp3ZDQ?si=lacMshBjC-oyQmay" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/QB7lOKp3ZDQ" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture; " allowfullscreen></iframe>
 
 - The global Nav2 Architecture can be summerize in the following picture:
 
@@ -422,7 +422,7 @@ In gazebo, add an obstacle in front of the robot (visible by the laser).
 > Try to  send an order of navigation (rviz). What happen ? Why ?
 
 
-### 4.5bis ORder of layer
+### 4.5bis Order of layers
 - change the order of layers into the confiration file like following:
 
 ```yaml
@@ -471,172 +471,178 @@ Ask the robot to navigate far from the blocked door. Then ask it again to reach 
 
 
 
+## 6 Add an obstacle layer to the global costmap
 
+### 6.1 Configuration
+1. Copy the configuration file `nav2_params_local_obstacle.yaml` from the `params/` folder to the `params/nav2_params_local_global_obstacle.yaml`.
 
+2. Start the simulator with the new configuration file 
 
+### 6.2 Update the global costmap.
 
+As see before, the `planner_server` needs to be informed of new obstacles in order to provide new general trajectories. To do so, the global costmap configuration show be modified:
 
-
-
-
-
-TODO
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-### 4.7 Add an obstacle layer to the global costmap
-
-Modify the **global_costmap_params.yaml** configuration file as follow:
+Modify the **global_costmap** configuration file as follow:
 
 ```yaml
 global_costmap:
-   lobal_frame: /map
-   robot_base_frame: /base_footprint
-   update_frequency: 2.5
-   publish_frequency: 2.0
-   #static_map: true
-   transform_tolerance: 0.5
-   plugins:
-     - {name: static_layer,            type: "costmap_2d::StaticLayer"}
-     - {name: obstacle_layer,      type: "costmap_2d::VoxelLayer"}
-     - {name: inflation_layer,         type: "costmap_2d::InflationLayer"}
-
+  global_costmap:
+    ros__parameters:
+      update_frequency: 1.0 
+      publish_frequency: 1.0
+      global_frame: map    
+      robot_base_frame: base_link
+      use_sim_time: True
+      robot_radius: 0.22   
+      resolution: 0.05     
+      track_unknown_space: true 
+      #Line below updated
+      plugins: ["static_layer","obstacle_layer", "inflation_layer"] 
+      ##### New Section #####
+      obstacle_layer:
+        plugin: "nav2_costmap_2d::ObstacleLayer"
+        enabled: False
+        combination_method: 1
+        observation_sources: scan
+      scan:
+          topic: /scan
+          max_obstacle_height: 2.0
+          clearing: True
+          marking: True
+          data_type: "LaserScan"
+          raytrace_max_range: 3.0
+          raytrace_min_range: 0.0
+          obstacle_max_range: 2.5
+          obstacle_min_range: 0.0
+      #######################
+      inflation_layer:
+        plugin: "nav2_costmap_2d::InflationLayer"
+        cost_scaling_factor: 3.0
+        inflation_radius: 0.55
+      static_layer:
+        plugin: "nav2_costmap_2d::StaticLayer" 
+        map_subscribe_transient_local: True   
+      always_send_full_costmap: True
 ```
 
 
-### 4.8 Fourth test of the obstacle layer
+### 6.3 Test of the obstacle layer on both local and global costmap
 
 Restart your simulation.
 
 In gazebo, move your robot to a room with 4 doors.
 
-
 Add an obstacle into rviz that block the closest door.
 
 Through rviz ask your robot to navigation to another room avoiding the new obstacle
 
-What happen ? Why ? what is the difference with the new  **/move_base/global_costmap/costmap** into rviz ? Why ?
+> What happen ? Why ? what is the difference with the new  **/global_costmap/costmap** into rviz ? Why ?
 
 
-## 5. Add 3d obstacle detection
+## 7. Add 3d obstacle detection
 
-### 5.1 Configuration
+### 7.1 Configuration
 
-1. Copy all configuration files from the param/obstacle_layer folder to the param/3d_obstacle_layer folder.
-2. Change the launch file as follow to use your new config.
- in the amcl_demo.launch file :
+1. Copy the configuration file `nav2_params_local_global_obstacle.yaml` from the `params/` folder to the `params/nav2_params_3D_local_global_obstacle.yaml`.
 
-```xml
-<include file="$(find turtlebot_gazebo)/launch/navigation/move_base_3d_obstacle_layer.launch.xml">
-    <arg name="laser_topic" default="$(arg scan_topic)"/>
-  </include>
-```
+2. Start the simulator with the new configuration file 
 
-### 5.2 First Test with 3D obstacle
+### 7.2 First Test with 3D obstacle
 Restart your simulation.
 
-Display the **/move_base/local_costmap/costmap** into rviz.
+Display the **/local_costmap/costmap** into rviz.
 
 In gazebo, add a table obstacle in front of the robot.
 
 Ask the robot to navigate behind the table.
 
-What happened ? why ?
+> What happened ? why ?
 
 Display the PointCloud2 of the **/camera/depth/points** topic into rviz.
 
-What can you conclude ?
+> What can you conclude ?
 
 
-### 5.3 Add a source of observation
+### 7.3 Add a source of observation
 
-Go into the **costmap_common_params.yaml** configuration file and add an observation source as follow:
+Go into the **nav2_params_3D_local_global_obstacle.yaml** configuration file and add a new `voxel` costmap layer:
 
 ```yaml
-robot_radius: 0.20
-map_type: voxel
-
-static_layer:
-  enabled:              true
-
-#Inflate layer for the global cost map
-inflation_layer:
-  enabled:              true
-  cost_scaling_factor:  5
-  inflation_radius:     0.5
-
-obstacle_layer:
-  enabled:              true
-  combination_method:   1
-
-  #ObstacleCostmapPlugin
-  track_unknown_space:  true
-
-  #VoxelCostmapPlugin
-  origin_z: 0.0
-  z_resolution: 0.2
-  z_voxels: 10
-  unknown_threshold:    15
-  mark_threshold:       0
-  publish_voxel_map: false
-
-  #Sensor management parameter
-  max_obstacle_height:  1.0 #2.5
-  obstacle_range: 5.0
-  raytrace_range: 5.0
-  observation_sources: scan pcl_scan
-
-  #Observation sources
-  scan:
-    data_type: LaserScan
-    topic: /kinect_scan
-    marking: true
-    clearing: true
-    min_obstacle_height: 0.25
-    max_obstacle_height: 1.45
-
-  #New Section
-  pcl_scan:
-    data_type: PointCloud2
-    topic: /camera/depth/points
-    marking: true
-    clearing: true
-    min_obstacle_height: 0.25
-    max_obstacle_height: 2.0
-    obstacle_range: 2.0
-    raytrace_range: 2.5
-    inf_is_valid: false
-
-#Inflate layer for the local cost map
-inflation_local_layer:
-  enabled:              true
-  cost_scaling_factor:  5
-  inflation_radius:     0.3
+local_costmap:
+  local_costmap:
+    ros__parameters:
+      update_frequency: 5.0
+      publish_frequency: 2.0
+      global_frame: odom
+      robot_base_frame: base_link
+      use_sim_time: True
+      rolling_window: true
+      width: 5
+      height: 5
+      resolution: 0.05
+      robot_radius: 0.22
+      #Line below updated
+      plugins: ["obstacle_layer", "voxel_layer","inflation_layer"]
+      obstacle_layer:
+        plugin: "nav2_costmap_2d::ObstacleLayer"
+        enabled: False
+        combination_method: 1
+        observation_sources: scan
+      scan:
+          topic: /scan
+          max_obstacle_height: 2.0
+          clearing: True
+          marking: True
+          data_type: "LaserScan"
+          raytrace_max_range: 3.0
+          raytrace_min_range: 0.0
+          obstacle_max_range: 2.5
+          obstacle_min_range: 0.0
+      ##### New Section #####
+      voxel_layer:
+        plugin: "nav2_costmap_2d::VoxelLayer"
+        enabled: True
+        publish_voxel_map: True
+        origin_z: 0.0
+        z_resolution: 0.05
+        z_voxels: 16
+        max_obstacle_height: 2.0
+        mark_threshold: 0
+        combination_method: 1
+        observation_sources: cam
+        cam:
+          topic: /intel_realsense_r200_depth/points
+          min_obstacle_height: 0.2
+          max_obstacle_height: 2.0
+          clearing: True
+          marking: True
+          data_type: "PointCloud2"
+      #######################
+      inflation_layer:
+        plugin: "nav2_costmap_2d::InflationLayer"
+        cost_scaling_factor: 3.0
+        inflation_radius: 0.55
+      static_layer:
+        plugin: "nav2_costmap_2d::StaticLayer"
+        map_subscribe_transient_local: True
+      always_send_full_costmap: True
 ```
+> What is the difference between  `voxel_layer` and `obstacle_layer` ?
 
-For a good configuration of the 3D sensor, you must adjust the parameters of the **VoxelCostmapPlugin**. Have a look to the [ROS navigation tuning guide](http://kaiyuzheng.me/documents/navguide.pdf), page 13 to get more detail about Voxel.
+For a good configuration of the 3D sensor, you must adjust the parameters of the **VoxelCostmapPlugin**. Have a look to the [ROS navigation tuning guide](http://kaiyuzheng.me/documents/navguide.pdf), page 13 to get more detail about Voxel. For Nav2 parameters references you see the following page [Nav2 Voxel Layer]()
+
+- In a nutsheel the following picture sumup Voxel parameters:
+
+<img src="./img/voxel_layer.png" alt="Nav2d Voxel Layer" width="600"/>
 
 
-### 5.4 Second with 3D obstacle
+### 7.4 Second with 3D obstacle
 Restart your simulation.
 
-Display the **/move_base/local_costmap/costmap** into rviz.
+Display the **local_costmap/costmap** into rviz.
 
 In gazebo, add a table obstacle in front of the robot.
 
 Ask the robot to navigate behind the table.
 
-What happened ? why ?
+> What happened ? why ?
