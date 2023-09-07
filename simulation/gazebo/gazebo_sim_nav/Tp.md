@@ -4,12 +4,25 @@
 
 The following document presents an incremental overview of the different ROS configuration files and parameters used in Ros Navigation Package.
 Before starting have a look to the following resources:
- - ROS [move_base](http://wiki.ros.org/move_base) package
- - ROS [costmap_2d](http://wiki.ros.org/costmap_2d) package
+ - ROS [Nav2](https://navigation.ros.org/) documentation
+ - ROS [Nav2 general concepts](https://navigation.ros.org/concepts/index.html) documentation
+ - ROS [Nav2 costmap_2d](https://navigation.ros.org/configuration/packages/configuring-costmaps.html) documentation
+ - ROS [Nav2 costmap_2d github](https://navigation.ros.org/configuration/packages/configuring-costmaps.html) package
+
+Most of navigation concepts come from ROS1 also have a look to 
  - ROS wiki page of [Basic Navigation Tuning Guide](http://wiki.ros.org/navigation/Tutorials/Navigation%20Tuning%20Guide)
  - The excellent ROS navigation tuning guide providing by Kaiyu Zheng [here](http://kaiyuzheng.me/documents/navguide.pdf)
 
-<img src="http://wiki.ros.org/navigation/Tutorials/RobotSetup?action=AttachFile&do=get&target=overview_tf.png" alt="ROS1 Navigation Stack" width="600"/>
+- A Complete introduction is also available here
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/QB7lOKp3ZDQ?si=lacMshBjC-oyQmay" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+
+- The global Nav2 Architecture can be summerize in the following picture:
+
+
+<img src="https://ros2-industrial-workshop.readthedocs.io/en/latest/_images/navigation_overview.png" alt="ROS1 Navigation Stack" width="600"/>
+
+
 
 ## 1. Start Simulation and Mapping
 ### 1.1. Start simulator for mapping
@@ -29,16 +42,15 @@ Before starting have a look to the following resources:
     - `Color`: 252; 175; 62
 ### 1.3 Map the environment
   - Begin to map the environment with the teleop
-  - What happened when the robot move ? Why ?
+  > - What happened when the robot move ? Why ?
   - Remember how the map is built (behaviour of affordance map)
-  - What happened when your robot tries to map a long corridor ? Explain
+  > - What happened when your robot tries to map a long corridor ? Explain
 
 ### 1.4 Map files
-  - After mapping some rooms, save your map with the following command:
+  - After mapping some rooms, save your map with the following command (you can see references here [https://navigation.ros.org/tutorials/docs/navigation2_with_slam.html](https://navigation.ros.org/tutorials/docs/navigation2_with_slam.html)):
 
   ```
-    rosrun map_server map_saver -f myMap
-
+    ros2 run nav2_map_server map_saver_cli -f ~/map
   ```
   - 2 files are generated:
     - `myMap.yaml`
@@ -46,6 +58,8 @@ Before starting have a look to the following resources:
   
   - Open the myMap.yaml and explain each lines
 
+
+<!--- NEED TO BE UPDATED ADD A NEW LASER SCAN SOURCE
 ### 1.5 Change observation source
   - Stop your gmapping node
   - Uncomment the following line in the `gmapping_demo.launch` file
@@ -55,110 +69,178 @@ Before starting have a look to the following resources:
   - This line changes the observation source from laser to kinect "laser"
   - Start again your gmapping node and try to map the environment
   - What do you observe ? Why ?
+-->
 
 ### 1.6 ref
-  - [http://wiki.ros.org/map_server](http://wiki.ros.org/map_server)
+  - [https://index.ros.org/p/nav2_map_server/](https://index.ros.org/p/nav2_map_server/)
 
 
 ## 2. Start simulation env.
 
 
 - Follow the instructions provided in the section **Start Simlation for navigation** of the [readme.md](./readme.md).
- Use the **move_base_no-config.launch.xml** in the **amcl_demo.launch** to start the basic configuration.
 
 - Check that in the env. is correctly load into gazebo (env. plus robot).
 
 - Teleoperate the robot into the simulation.
 
 ```
-roslaunch turtlebot_teleop keyboard_teleop.launch
+ros2 run teleop_twist_keyboard teleop_twist_keyboard
 ```
+
+### 2.1 Understand default configuration
+- Open the  configuration file `nav2_params_empty.yaml` from the `params/` folder
+```yaml
+global_costmap:
+  global_costmap:
+    ros__parameters:
+      update_frequency: 1.0 
+      publish_frequency: 1.0
+      global_frame: map    
+      robot_base_frame: base_link
+      use_sim_time: True
+      robot_radius: 0.22   
+      resolution: 0.05     
+      track_unknown_space: true 
+      plugins: ["static_layer"] 
+      static_layer:
+        plugin: "nav2_costmap_2d::StaticLayer" 
+        map_subscribe_transient_local: True   
+      always_send_full_costmap: True
+
+local_costmap:
+  local_costmap:
+    ros__parameters:
+      update_frequency: 5.0
+      publish_frequency: 2.0
+      global_frame: odom
+      robot_base_frame: base_link
+      use_sim_time: True
+      rolling_window: true
+      width: 8
+      height: 8
+      resolution: 0.05
+      robot_radius: 0.22
+      plugins: ["static_layer"]
+      static_layer:
+        plugin: "nav2_costmap_2d::StaticLayer"
+        map_subscribe_transient_local: True
+      always_send_full_costmap: True
+amcl:
+  ...
+bt_navigator:
+  ...
+bt_navigator_navigate_through_poses_rclcpp_node:
+  ...
+bt_navigator_navigate_to_pose_rclcpp_node:
+  ...
+controller_server:
+  ...  
+map_server:
+  ...
+map_saver:
+  ...
+planner_server:
+  ...
+smoother_server:
+  ...
+behavior_server:
+  ...
+robot_state_publisher:
+  ...
+waypoint_follower:
+  ...
+velocity_smoother:
+  ...
+```
+
+-  In this configuration file, main navigation components are addressed :
+
+<img src="./img/archi-and-config.png" alt="ROS1 Navigation Stack" width="600"/>
+
+- In this tutorial we will focus on cost map
+- What is the difference between `local` and `global_costmap`, What is the purpose of each costmap ?
+
+> - In the global costmap explain the following:
+>   - `update_frequency`
+>   - `resolution: 0.05`
+>   - `static_layer`
+
+
+### 2.1 Test default configuration
 
 - Try to ask a navigation throught riz
     1. Relocate the robot using the **2D Pose Estimate** tool
     1. Ask goal with the **2D Nav Goal** tool
 
-- What happened when the robot tries to cross a door ? Why ?
+> - What happened when the robot tries to cross a door ? Why ?
+
 
 
 ## 3. Inflate layer
 
 ### 3.1 Configuration
 
-1. Copy all configuration files from the param/no-config folder to the param/inflate_layer folder.
-2. Change the launch file as follow to use your new config.
- in the amcl_demo.launch file :
-
-```xml
-<include file="$(find turtlebot_gazebo)/launch/navigation/move_base_inflate_layer.launch.xml">
-    <arg name="laser_topic" default="$(arg scan_topic)"/>
-  </include>
-```
+1. Copy the configuration file `nav2_params_empty.yaml` from the `params/` folder to the `params/nav2_params_inflate.yaml`.
 
 
 ### 3.2 Add an inflate layer
-In the configuration file **costmap_common_params.yaml**, define an inflate layer (follow documentation in [costmap_2d]()) as follow:
+In the configuration file **nav2_params_inflate.yaml**, define an inflate layer (follow documentation in [https://navigation.ros.org/configuration/packages/costmap-plugins/inflation.html](https://navigation.ros.org/configuration/packages/costmap-plugins/inflation.html)) as follow:
 ```yaml
-robot_radius: 0.20  
-map_type: voxel
-
-static_layer:
-  enabled:              true
-
-#New section
-inflation_layer:
-  enabled:              true
-  cost_scaling_factor:  5  
-  inflation_radius:     0.5
-
-
+global_costmap:
+  global_costmap:
+    ros__parameters:
+      update_frequency: 1.0 
+      publish_frequency: 1.0
+      global_frame: map    
+      robot_base_frame: base_link
+      use_sim_time: True
+      robot_radius: 0.22   
+      resolution: 0.05     
+      track_unknown_space: true 
+      plugins: ["static_layer","inflation_layer"] 
+      inflation_layer:
+        plugin: "nav2_costmap_2d::InflationLayer"
+        cost_scaling_factor: 3.0
+        inflation_radius: 0.55
+      static_layer:
+        plugin: "nav2_costmap_2d::StaticLayer" 
+        map_subscribe_transient_local: True   
+      always_send_full_costmap: True
+...
 ```
 
-Find the definition of each parameter:
- - Global parameters:
-    - robot_radius : radius of the robot use to compute cost into inflate layer (refer to inscribed_radius)
-    - map_type: type of map used to compute path ([voxel](http://wiki.ros.org/voxel_grid))
- - [Static layer](http://wiki.ros.org/costmap_2d/hydro/staticmap)
- - [Inflation layer](http://wiki.ros.org/costmap_2d/hydro/inflation)
+> Find the definition of each parameter:
+> - Global parameters:
+>    - robot_radius : radius of the robot use to compute cost into inflate layer (refer to inscribed_radius)
+> - [Static layer](https://navigation.ros.org/configuration/packages/costmap-plugins/static.html)
+> - [Inflation layer](https://navigation.ros.org/configuration/packages/costmap-plugins/inflation.html)
 
+Restart your simulation for navigation and try a new navigation order through Rviz.
 
- Go to the **global_costmap_params.yaml** configuration file and add the inflate layer:
+ Display the **/global_costmap/costmap** into rviz.
 
-```yaml
- global_costmap:
-   lobal_frame: /map
-   robot_base_frame: /base_footprint
-   update_frequency: 2.5
-   publish_frequency: 2.0
-   transform_tolerance: 0.5
-
-   #Updated section
-   plugins:
-     - {name: static_layer,            type: "costmap_2d::StaticLayer"}
-     - {name: inflation_layer,         type: "costmap_2d::InflationLayer"}
-```
-
- Restart your simulation for navigation and try a new navigation order through Rviz.
-
- Display the **/move_base/global_costmap/costmap** into rviz.
-
- What happened with the new configuration ? Explain the different robot trajectories ?
+> What happened with the new configuration ? Explain the different robot trajectories ?
 
 ### 3.2 Impact of inflate layer parameters on navigation path
 
 Launch the following command:
 
 ```
-rosrun rqt_reconfigure rqt_reconfigure
-
+ros2 run rqt_reconfigure rqt_reconfigure
 ```
 
-Play with different values to see the impact on the **/move_base/global_costmap/costmap**
+<!-- 
+Need a capure of rqt reconfigure here
+
+-->
+
+Play with different values to see the impact on the **/global_costmap/costmap**
 
 
 Try to make plan into the map through the make_plan service (move_base package) to see the influence of the parameter variations
 
-
+<!-- TODO FIND THE SERVICE AND COMMAND EXAMPLE
 E.g of make_plan command
 ```
 rosservice call /move_base/make_plan "start:
@@ -198,126 +280,73 @@ goal:
 tolerance: 0.5"
 
 ```
+-->
+
+> Explain the impact of the parameters. (see [ROS1 inflate layer](http://wiki.ros.org/costmap_2d/hydro/inflation))
 
 
-Explain the impact of the parameters. (see [inflate layer](http://wiki.ros.org/costmap_2d/hydro/inflation))
-
-
-In gazebo, add an obstacle in front of the robot. Try to  send an order of navigation through rviz. What happen ? Why ?
+In gazebo, add an obstacle in front of the robot. Try to send an order of navigation through rviz. What happen ? Why ?
 
 
 ## 4. Obstacle layer
 
 
 ### 4.1 Configuration
+1. Copy the configuration file `nav2_params_nav2_params_inflate.yaml` from the `params/` folder to the `params/nav2_params_local_obstacle.yaml`.
 
-1. Copy all configuration files from the param/inflate_layer folder to the param/obstacle_layer folder.
-2. Change the launch file as follow to use your new config.
- in the amcl_demo.launch file :
-
-```xml
-<include file="$(find turtlebot_gazebo)/launch/navigation/move_base_obstacle_layer.launch.xml">
-    <arg name="laser_topic" default="$(arg scan_topic)"/>
-  </include>
-```
+2. start the simulator with the new configuration file 
 
 
 ### 4.2 Add an obstacle layer
-In the configuration file **costmap_common_params.yaml**, define an inflate layer (follow documentation in costmap_2d) :
-
-```yaml
-robot_radius: 0.20
-map_type: voxel
-
-static_layer:
-  enabled:              true
-
-inflation_layer:
-  enabled:              true
-  cost_scaling_factor:  5
-  inflation_radius:     0.5
-
-#New section
-obstacle_layer:
-  enabled:              true
-  combination_method:   1
-
-  #ObstacleCostmapPlugin
-  track_unknown_space:  true    
-
-  #VoxelCostmapPlugin
-  origin_z: 0.0         
-  z_resolution: 0.2     
-  z_voxels: 10  
-  unknown_threshold:    15  
-  mark_threshold:       0
-  publish_voxel_map: false  
-
-  #Sensor management parameter
-  max_obstacle_height:  2.5
-  obstacle_range: 5.0  
-  raytrace_range: 5.0  
-  observation_sources: scan  
-
-  #Observation sources
-  scan:
-    data_type: LaserScan
-    topic: /kinect_scan
-    marking: true  
-    clearing: true  
-    min_obstacle_height: 0.25  
-    max_obstacle_height: 1.45
-
-```
-
-Find the definition of each parameter ([ros answers](https://answers.ros.org/question/226822/clear-map-around-the-robot/),[obstacle layer](http://wiki.ros.org/costmap_2d/hydro/obstacles)):
- - obstacle_layer:
-  - combination_method
-  - ObstacleCostmapPlugin
-    - track_unknown_space
-  - Sensor management parameter
-    - observation_sources
-    - max_obstacle_height
-    - obstacle_range
-    - raytrace_range
-  - VoxelCostmapPlugin
-    - origin_z
-    - z_resolution
-    - z_voxels
-    - unknown_threshold
-    - mark_threshold
-    - publish_voxel_map
-
-  Note: you can see that the information source come from the Kinect camera and not to the hokuyo. Currently an error style occurs when using hokuyo do the fact that the system says that the collected info is out of range
-
-  - Which kind of information is used as observation source ? Is there any alternative ?
-
-Add the new obstacle layer to the local costmap by modifying the **local_costmap_params.yaml** configuration file:
-
+In the configuration file **nav2_params_local_obstacle.yaml**, define an obstacle layer (follow documentation in costmap_2d) :
 
 ```yaml
 local_costmap:
-  global_frame: /odom
-  robot_base_frame: /base_footprint
-
-  update_frequency: 5.0
-  publish_frequency: 2.0
-  static_map: false
-  rolling_window: true
-
-  origin_x: 5.0
-  origin_y: 5.0
-  origin_z: 5.0
-
-  width: 10.0
-  height: 10.0
-  resolution: 0.05
-
-  transform_tolerance: 0.5
-  plugins:
-    - {name: obstacle_layer,      type: "costmap_2d::VoxelLayer"}
-
+  local_costmap:
+    ros__parameters:
+      update_frequency: 5.0
+      publish_frequency: 2.0
+      global_frame: odom
+      robot_base_frame: base_link
+      use_sim_time: True
+      rolling_window: true
+      width: 8
+      height: 8
+      resolution: 0.05
+      robot_radius: 0.22
+      plugins: ["obstacle_layer"]
+      obstacle_layer:
+        plugin: "nav2_costmap_2d::ObstacleLayer"
+        enabled: False
+        combination_method: 1
+        observation_sources: scan
+      scan:
+          topic: /scan
+          max_obstacle_height: 2.0
+          clearing: True
+          marking: True
+          data_type: "LaserScan"
+          raytrace_max_range: 3.0
+          raytrace_min_range: 0.0
+          obstacle_max_range: 2.5
+          obstacle_min_range: 0.0
+      static_layer:
+        plugin: "nav2_costmap_2d::StaticLayer"
+        map_subscribe_transient_local: True
+      always_send_full_costmap: True
 ```
+- 
+>Find the definition of each parameter ([ROS2 Nav2](https://navigation.ros.org/configuration/packages/costmap-plugins/obstacle.html),[ROS1 obstacle layer](http://wiki.ros.org/costmap_2d/hydro/obstacles)):
+> - obstacle_layer:
+>  - combination_method
+>    - track_unknown_space
+>  - Sensor management parameter
+>    - observation_sources
+>    - max_obstacle_height
+>    - obstacle_max_range
+>    - raytrace_max_range
+
+>  - Which kind of information is used as observation source ? Is there any alternative ?
 
 Following the document of the [costmap_2d](http://wiki.ros.org/costmap_2d) explain each parameters.
 
@@ -326,124 +355,101 @@ Following the document of the [costmap_2d](http://wiki.ros.org/costmap_2d) expla
 
 Restart your simulation.
 
-Display the **/move_base/local_costmap/costmap** into rviz.
+Display the **local_costmap/costmap** into rviz.
 
-In gazebo, add an obstacle in front of the robot (visible by the kinect camera).
+In gazebo, add an obstacle in front of the robot (visible by the laser).
 
-Try to  send an order of navigation through rviz. What happen ? Why ?
+> Try to  send an order of navigation through rviz. What happen ? Why ?
 
 
 ### 4.4 Add a custom inflate layer to the local planner
 
-In order to avoid correctly the obstacle, create a new inflate layer into the **costmap_common_params.yaml**
-
-
-```yaml
-robot_radius: 0.20
-map_type: voxel
-
-static_layer:
-  enabled:              true
-
-inflation_layer:
-  enabled:              true
-  cost_scaling_factor:  5
-  inflation_radius:     0.5
-
-obstacle_layer:
-  enabled:              true
-  combination_method:   1
-
-  #ObstacleCostmapPlugin
-  track_unknown_space:  true    
-
-  #VoxelCostmapPlugin
-  origin_z: 0.0         
-  z_resolution: 0.2     
-  z_voxels: 10  
-  unknown_threshold:    15  
-  mark_threshold:       0
-  publish_voxel_map: false  
-
-  #Sensor management parameter
-  max_obstacle_height:  2.5
-  obstacle_range: 5.0  
-  raytrace_range: 5.0  
-  observation_sources: scan  
-
-  #Observation sources
-  scan:
-    data_type: LaserScan
-    topic: /kinect_scan
-    marking: true  
-    clearing: true  
-    min_obstacle_height: 0.25  
-    max_obstacle_height: 1.45
-
-#New section
-inflation_local_layer:
-  enabled:              true
-  cost_scaling_factor:  5  
-  inflation_radius:     0.3
-
-```
-
-Update the local planner to take into account this layer, modify the **local_costmap_params.yaml** configuration file:
+In order to avoid correctly the obstacle, create a new inflate layer into the **nav2_params_local_obstacle.yaml**
 
 ```yaml
 local_costmap:
-  global_frame: /odom
-  robot_base_frame: /base_footprint
-
-  update_frequency: 5.0
-  publish_frequency: 2.0
-  static_map: false
-  rolling_window: true
-
-  origin_x: 5.0
-  origin_y: 5.0
-  origin_z: 5.0
-
-  width: 10.0
-  height: 10.0
-  resolution: 0.05
-
-  transform_tolerance: 0.5
-  plugins:
-  #CAUTION NEED TO GET OBSTACLE LAYER before inflate layer
-    - {name: obstacle_layer,      type: "costmap_2d::VoxelLayer"}
-    - {name: inflation_local_layer,     type: "costmap_2d::InflationLayer"}
+  local_costmap:
+    ros__parameters:
+      update_frequency: 5.0
+      publish_frequency: 2.0
+      global_frame: odom
+      robot_base_frame: base_link
+      use_sim_time: True
+      rolling_window: true
+      width: 8
+      height: 8
+      resolution: 0.05
+      robot_radius: 0.22
+      #Line below updated
+      plugins: ["obstacle_layer","inflation_layer"]
+      obstacle_layer:
+        plugin: "nav2_costmap_2d::ObstacleLayer"
+        enabled: False
+        combination_method: 1
+        observation_sources: scan
+      scan:
+          topic: /scan
+          max_obstacle_height: 2.0
+          clearing: True
+          marking: True
+          data_type: "LaserScan"
+          raytrace_max_range: 3.0
+          raytrace_min_range: 0.0
+          obstacle_max_range: 2.5
+          obstacle_min_range: 0.0
+      ##### New Section #####
+      inflation_layer:
+        plugin: "nav2_costmap_2d::InflationLayer"
+        cost_scaling_factor: 3.0
+        inflation_radius: 0.55
+      #######################
+      static_layer:
+        plugin: "nav2_costmap_2d::StaticLayer"
+        map_subscribe_transient_local: True
+      always_send_full_costmap: True
 
 ```
+
 
 ### 4.5 Second test of the obstacle layer
 
 Restart your simulation.
 
-Display the **/move_base/local_costmap/costmap** into rviz.
+Display the **local_costmap/costmap** into rviz.
 
-In gazebo, add an obstacle in front of the robot (visible by the kinect camera).
+In gazebo, add an obstacle in front of the robot (visible by the laser).
 
-Try to  send an order of navigation (rviz). What happen ? Why ?
+> Try to  send an order of navigation (rviz). What happen ? Why ?
 
+
+### 4.5bis ORder of layer
+- change the order of layers into the confiration file like following:
+
+```yaml
+  ...
+ plugins: ["inflation_layer", "obstacle_layer"]
+ ...
+```
+> - Make the test again has explain in 4.5, What happens ? Why ?
+
+- Reset your configuration file to be again in the following conifguration 
+
+```yaml
+  ...
+ plugins: ["obstacle_layer", "inflation_layer"]
+ ...
+```
 
 ### 4.6 Third test of the obstacle layer
 
 Reduce the size of the local costmap window:
 
-
 ```yaml
 local_costmap:
  ...
-
-  origin_x: -2.0
-  origin_y: -2.0
-  origin_z: -2.0
-
-  width: 4.0
-  height: 4.0
+  width: 4
+  height: 4
   resolution: 0.05
-
  ...
 
 ```
@@ -452,18 +458,43 @@ Restart your simulation.
 
 In gazebo, move your robot into a room with 4 doors.
 
-
 Add an obstacle into rviz blocking the closest door.
 
 Using rviz, ask your robot to navigate to another room avoiding the new obstacle
 
-
-Does the global planner take into account the obstacle ? Why ?
-
+> Does the global planner take into account the obstacle ? Why ?
 
 Ask the robot to navigate far from the blocked door. Then ask it again to reach a goal behind the door blocked by the obstacle.
-What happen ? Why ?
-How is it possible to fix that ?
+> What happen ? Why ?
+
+> How is it possible to fix that ?
+
+
+
+
+
+
+
+
+
+
+
+
+TODO
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 ### 4.7 Add an obstacle layer to the global costmap
