@@ -14,8 +14,10 @@ Most of navigation concepts come from ROS1 also have a look to
  - The excellent ROS navigation tuning guide providing by Kaiyu Zheng [here](http://kaiyuzheng.me/documents/navguide.pdf)
 
 - A Complete introduction is also available here
-
+<!--
 <iframe width="560" height="315" src="https://www.youtube.com/embed/QB7lOKp3ZDQ" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture; " allowfullscreen></iframe>
+-->
+[![Nav2](https://img.youtube.com/vi/QB7lOKp3ZDQ/0.jpg)](https://www.youtube.com/watch?v=QB7lOKp3ZDQ "Nav2")
 
 - The global Nav2 Architecture can be summerize in the following picture:
 
