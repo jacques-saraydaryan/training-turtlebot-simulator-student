@@ -127,10 +127,17 @@ def generate_launch_description():
         'use_respawn', default_value='False',
         description='Whether to respawn if a node crashes. Applied when composition is disabled.')
 
+    #declare_rviz_config_file_cmd = DeclareLaunchArgument(
+    #    'rviz_config_file',
+    #    default_value=os.path.join(
+    #        gazebo_sim_nav_dir, 'rviz', 'nav2_mapping_empty.rviz'),
+    #    description='Full path to the RVIZ config file to use')
+    
+    
     declare_rviz_config_file_cmd = DeclareLaunchArgument(
         'rviz_config_file',
         default_value=os.path.join(
-            gazebo_sim_nav_dir, 'rviz', 'nav2_mapping_empty.rviz'),
+            gazebo_sim_nav_dir, 'rviz', 'nav2_default_view.rviz'),
         description='Full path to the RVIZ config file to use')
 
     declare_use_simulator_cmd = DeclareLaunchArgument(

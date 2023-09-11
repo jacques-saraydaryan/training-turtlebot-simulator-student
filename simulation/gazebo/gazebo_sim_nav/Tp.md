@@ -319,7 +319,7 @@ local_costmap:
         enabled: False
         combination_method: 1
         observation_sources: scan
-      scan:
+        scan:
           topic: /scan
           max_obstacle_height: 2.0
           clearing: True
@@ -386,7 +386,7 @@ local_costmap:
         enabled: False
         combination_method: 1
         observation_sources: scan
-      scan:
+        scan:
           topic: /scan
           max_obstacle_height: 2.0
           clearing: True
@@ -503,7 +503,7 @@ global_costmap:
         enabled: False
         combination_method: 1
         observation_sources: scan
-      scan:
+        scan:
           topic: /scan
           max_obstacle_height: 2.0
           clearing: True
@@ -587,7 +587,7 @@ local_costmap:
         enabled: False
         combination_method: 1
         observation_sources: scan
-      scan:
+        scan:
           topic: /scan
           max_obstacle_height: 2.0
           clearing: True
