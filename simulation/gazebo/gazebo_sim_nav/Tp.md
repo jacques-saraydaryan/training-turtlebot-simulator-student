@@ -632,7 +632,7 @@ For a good configuration of the 3D sensor, you must adjust the parameters of the
 
 - In a nutsheel the following picture sumup Voxel parameters:
 
-<img src="./img/voxel_layer.png" alt="Nav2d Voxel Layer" width="600"/>
+<img src="./img/voxel_layer.png" alt="Nav2d Voxel Layer" width="100%"/>
 
 
 ### 7.4 Second with 3D obstacle
