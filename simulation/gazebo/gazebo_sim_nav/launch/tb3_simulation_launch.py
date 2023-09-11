@@ -28,6 +28,7 @@ from launch_ros.actions import Node
 
 def generate_launch_description():
     # Get the launch directory
+    gazebo_sim_nav_dir =  get_package_share_directory('gazebo_sim_nav')
     bringup_dir = get_package_share_directory('nav2_bringup')
     launch_dir = os.path.join(bringup_dir, 'launch')
 
@@ -91,7 +92,7 @@ def generate_launch_description():
     declare_map_yaml_cmd = DeclareLaunchArgument(
         'map',
         default_value=os.path.join(
-            bringup_dir, 'maps', 'js_custom_map.yaml'),
+            gazebo_sim_nav_dir, 'maps', 'js_custom_map.yaml'),
         description='Full path to map file to load')
 
     declare_use_sim_time_cmd = DeclareLaunchArgument(
@@ -148,7 +149,7 @@ def generate_launch_description():
         #              https://github.com/ROBOTIS-GIT/turtlebot3_simulations/issues/91
         # default_value=os.path.join(get_package_share_directory('turtlebot3_gazebo'),
         # worlds/turtlebot3_worlds/waffle.model')
-        default_value=os.path.join(bringup_dir, 'worlds', 'js_world_room.model'),
+        default_value=os.path.join(gazebo_sim_nav_dir, 'worlds', 'js_world_room.model'),
         description='Full path to world model file to load')
 
     declare_robot_name_cmd = DeclareLaunchArgument(
@@ -158,7 +159,7 @@ def generate_launch_description():
 
     declare_robot_sdf_cmd = DeclareLaunchArgument(
         'robot_sdf',
-        default_value=os.path.join(bringup_dir, 'worlds', 'waffle.model'),
+        default_value=os.path.join(gazebo_sim_nav_dir, 'worlds', 'waffle.model'),
         description='Full path to robot sdf file to spawn the robot in gazebo')
 
     # Specify the actions
@@ -174,7 +175,7 @@ def generate_launch_description():
         cmd=['gzclient'],
         cwd=[launch_dir], output='screen')
 
-    urdf = os.path.join(bringup_dir, 'urdf', 'turtlebot3_waffle.urdf')
+    urdf = os.path.join(gazebo_sim_nav_dir, 'urdf', 'turtlebot3_waffle.urdf')
     with open(urdf, 'r') as infp:
         robot_description = infp.read()
 
