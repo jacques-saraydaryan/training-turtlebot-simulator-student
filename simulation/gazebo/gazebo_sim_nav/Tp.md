@@ -22,7 +22,7 @@ Most of navigation concepts come from ROS1 also have a look to
 - The global Nav2 Architecture can be summerize in the following picture:
 
 
-<img src="https://ros2-industrial-workshop.readthedocs.io/en/latest/_images/navigation_overview.png" alt="ROS1 Navigation Stack" width="600"/>
+<img src="https://ros2-industrial-workshop.readthedocs.io/en/latest/_images/navigation_overview.png" alt="ROS1 Navigation Stack" width=""/>
 
 
 
@@ -155,7 +155,7 @@ velocity_smoother:
 
 -  In this configuration file, main navigation components are addressed :
 
-<img src="./img/archi-and-config.png" alt="ROS1 Navigation Stack" width="600"/>
+<img src="./img/archi-and-config.png" alt="ROS1 Navigation Stack" width="100%"/>
 
 - In this tutorial we will focus on cost map
 - What is the difference between `local` and `global_costmap`, What is the purpose of each costmap ?
@@ -620,7 +620,7 @@ local_costmap:
       inflation_layer:
         plugin: "nav2_costmap_2d::InflationLayer"
         cost_scaling_factor: 3.0
-        inflation_radius: 0.55
+        inflation_radius: 0.55simulation/gazebo/gazebo_sim_nav/readme.md
       static_layer:
         plugin: "nav2_costmap_2d::StaticLayer"
         map_subscribe_transient_local: True
