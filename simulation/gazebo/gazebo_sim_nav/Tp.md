@@ -32,18 +32,15 @@ Most of navigation concepts come from ROS1 also have a look to
 ### 1.2. Configure Rviz 
 - Configure Rviz to see the following:
   - Map generated (topic `/map`)
-  - Laser information (topic `/laserscan`)
+  - Laser information (topic `/scan`)
     - `Style`: Boxes
     - `Size`: 0.07
     - `Color Transformer`: FlatColor
     - `Color`: 255; 0; 0
-  - Kinect "Laser" information (topic `/kinect_scan`)
-    - `Style`: Boxes
-    - `Size`: 0.1
-    - `Color Transformer`: FlatColor
-    - `Color`: 252; 175; 62
+  
 ### 1.3 Map the environment
   - Begin to map the environment with the teleop
+  - Once a first map is received change the fixed frame of `rviz` to `/map`.
   > - What happened when the robot move ? Why ?
   - Remember how the map is built (behaviour of affordance map)
   > - What happened when your robot tries to map a long corridor ? Explain

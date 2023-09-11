@@ -28,7 +28,7 @@ from launch_ros.actions import Node
 
 def generate_launch_description():
     # Get the launch directory
-    bringup_dir = get_package_share_directory('nav2_bringup')
+    gazebo_sim_nav_dir =  get_package_share_directory('gazebo_sim_nav')
     bringup_dir = get_package_share_directory('nav2_bringup')
     launch_dir = os.path.join(bringup_dir, 'launch')
 
@@ -42,7 +42,8 @@ def generate_launch_description():
     namespace = LaunchConfiguration('namespace')
     use_namespace = LaunchConfiguration('use_namespace')
     
-    map_file_path = os.path.join(bringup_dir, 'maps', 'js_custom_map.yaml')
+    #map_file_path = os.path.join(bringup_dir, 'maps', 'js_custom_map.yaml')
+    map_file_path = os.path.join(bringup_dir, 'maps', '')
     #map_yaml_file = LaunchConfiguration('map', default=os.path.join(bringup_dir, 'maps', 'js_custom_map.yaml'))
     map_yaml_file = LaunchConfiguration('map')
     #print("-----------------------------------> {}".format(map_file_path))
@@ -101,7 +102,7 @@ def generate_launch_description():
     declare_map_yaml_cmd = DeclareLaunchArgument(
         'map',
         default_value=os.path.join(
-            bringup_dir, 'maps', 'js_custom_map.yaml'),
+            gazebo_sim_nav_dir, 'maps', 'js_custom_map.yaml'),
         description='Full path to map file to load')
 
     declare_use_sim_time_cmd = DeclareLaunchArgument(
@@ -111,7 +112,7 @@ def generate_launch_description():
 
     declare_params_file_cmd = DeclareLaunchArgument(
         'params_file',
-        default_value=os.path.join(bringup_dir, 'params', 'nav2_params_full.yaml'),
+        default_value=os.path.join(gazebo_sim_nav_dir, 'params', 'nav2_params_empty.yaml'),
         description='Full path to the ROS2 parameters file to use for all launched nodes')
 
     declare_autostart_cmd = DeclareLaunchArgument(
@@ -129,7 +130,7 @@ def generate_launch_description():
     declare_rviz_config_file_cmd = DeclareLaunchArgument(
         'rviz_config_file',
         default_value=os.path.join(
-            bringup_dir, 'rviz', 'nav2_default_view.rviz'),
+            gazebo_sim_nav_dir, 'rviz', 'nav2_mapping_empty.rviz'),
         description='Full path to the RVIZ config file to use')
 
     declare_use_simulator_cmd = DeclareLaunchArgument(
@@ -158,7 +159,7 @@ def generate_launch_description():
         #              https://github.com/ROBOTIS-GIT/turtlebot3_simulations/issues/91
         # default_value=os.path.join(get_package_share_directory('turtlebot3_gazebo'),
         # worlds/turtlebot3_worlds/waffle.model')
-        default_value=os.path.join(bringup_dir, 'worlds', 'js_world_room.model'),
+        default_value=os.path.join(gazebo_sim_nav_dir, 'worlds', 'js_world_room.model'),
         description='Full path to world model file to load')
 
     declare_robot_name_cmd = DeclareLaunchArgument(
@@ -168,7 +169,7 @@ def generate_launch_description():
 
     declare_robot_sdf_cmd = DeclareLaunchArgument(
         'robot_sdf',
-        default_value=os.path.join(bringup_dir, 'worlds', 'waffle.model'),
+        default_value=os.path.join(gazebo_sim_nav_dir, 'worlds', 'waffle.model'),
         description='Full path to robot sdf file to spawn the robot in gazebo')
 
     # Specify the actions
@@ -220,7 +221,7 @@ def generate_launch_description():
 
     bringup_cmd = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
-            os.path.join(launch_dir, 'bringup_without_nav_launch.py')),
+            os.path.join(gazebo_sim_nav_dir,'launch','bringup_without_nav_launch.py')),
         launch_arguments={'namespace': namespace,
                           'use_namespace': use_namespace,
                           'slam': slam,

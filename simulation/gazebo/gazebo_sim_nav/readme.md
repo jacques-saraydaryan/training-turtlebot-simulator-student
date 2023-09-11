@@ -7,41 +7,16 @@
 
 ```
 ros2 launch gazebo_sim_nav tb3_simulation_without_nav_launch.py headless:=False
-#roslaunch turtlebot_gazebo turtlebot_navigation_rooms_short_world.launch
 ros2 launch slam_toolbox online_async_launch.py
-#roslaunch turtlebot_gazebo gmapping_demo.launch
-roslaunch turtlebot_teleop keyboard_teleop.launch
-rviz
+ros2 run teleop_twist_keyboard teleop_twist_keyboard
 ```
 
 
 # Start Simlation for navigation
 
-```
-roslaunch turtlebot_gazebo turtlebot_navigation_rooms_short_world.launch
-roslaunch turtlebot_gazebo amcl_demo.launch
-rviz
-```
-
-go to the maps directory and load the map
+- Launch Gazebo, Localization, navigation and tools.
 
 ```
-roscd turtlebot_gazebo/maps/
-rosrun map_server map_server roomv1.yaml
-```
-
-to tune the navigation configuration go to the amcl_demo.launch file and modify the section:
-
-```xml
-<include file="$(find turtlebot_gazebo)/launch/navigation/move_base_obstacle_layer.launch.xml">
-    <arg name="laser_topic" default="$(arg scan_topic)"/>
-  </include>
-```
-use one of the following movebase configuration that respectively load configuration file from the /params directory
-```
-move_base_original.launch.xml
-move_base_no-config.launch.xml
-move_base_inflate_layer.launch.xml
-move_base_obstacle_layer.launch.xml
-move_base_3d_obstacle_layer.launch.xml
+cd src/training-turtlebot-simulator-student/simulation/gazebo/gazebo_sim_nav/params/
+ros2 launch gazebo_sim_nav tb3_simulation_launch.py headless:=False params_file:="nav2_params_empty.yaml" map:="<your absolute map path>/<your map>.yaml"
 ```
