@@ -102,7 +102,7 @@ def generate_launch_description():
     declare_map_yaml_cmd = DeclareLaunchArgument(
         'map',
         default_value=os.path.join(
-            gazebo_sim_nav_dir, 'maps', 'js_custom_map.yaml'),
+            gazebo_sim_nav_dir, 'maps', ''),
         description='Full path to map file to load')
 
     declare_use_sim_time_cmd = DeclareLaunchArgument(
