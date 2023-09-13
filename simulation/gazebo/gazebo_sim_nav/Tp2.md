@@ -2,12 +2,12 @@
 
 ## 1. Introduction
 
-The following document presents an incremental overview of the different ROS local planner configuration 
+The following document presents an incremental overview of the different ROS  controller server configuration (old local planner configuration )
 Before starting have a look to the following resources:
- - ROS [move_base](http://wiki.ros.org/move_base) package
- - ROS [costmap_2d](http://wiki.ros.org/costmap_2d) package
- - ROS wiki page of [Basic Navigation Tuning Guide](http://wiki.ros.org/navigation/Tutorials/Navigation%20Tuning%20Guide)
- - The excellent ROS navigation tuning guide providing by Kaiyu Zheng [here](http://kaiyuzheng.me/documents/navguide.pdf)
+ - ROS 2 [Nav2 Controller Server](https://navigation.ros.org/configuration/packages/configuring-controller-server.html)
+ - ROS [Nav2 general concepts](https://navigation.ros.org/concepts/index.html) documentation
+ - ROS [Nav2 costmap_2d](https://navigation.ros.org/configuration/packages/configuring-costmaps.html) documentation
+ - ROS [Nav2 costmap_2d github](https://navigation.ros.org/configuration/packages/configuring-costmaps.html) package
 
 Example of expected result:
 
@@ -19,29 +19,21 @@ Example of expected result:
 
 - Follow the instructions provided in the section **Start Simlation for navigation**.
 ```
-roslaunch turtlebot_gazebo turtlebot_navigation_local_planner_world.launch
-roslaunch turtlebot_gazebo amcl_demo_local_planner.launch
-
+cd src/training-turtlebot-simulator-student/simulation/gazebo/gazebo_sim_nav/params/
+ros2 launch gazebo_sim_nav tb3_simulation_local_launch.py headless:=True params_file:="nav2_params_local.yaml"
 ```
-
-```
-roscd turtlebot_gazebo/maps/
-rosrun map_server map_server roomv1_local_planner.yaml
-```
-
- Use the **move_base_localPlanner_DWA.launch.xml** in the **amcl_demo_local_planner.launch** to start the basic configuration.
 
 - Check that in the env. is correctly load into gazebo (env. plus robot).
 
-- Check that the robot is correctly localized (AMCL red arrow).
+- Check that the robot is correctly localized (AMCL green arrow).
 
 
 - Try to ask a navigation throught riz
     1. Relocate the robot using the **2D Pose Estimate** tool if needed
     1. Ask goal with the **2D Nav Goal** tool
 
-- What means the green path ?
-- What means the blue path ?
+>  - What means the green path ?
+> -  What means the blue path ?
 
 
 ## 3. Navigation Loop
@@ -50,11 +42,11 @@ To test the different configuration of local planner, we will first create a nod
 
 1. Go to the following folder
 ```
-roscd turtlebot_gazebo/scripts
+cd src/training-turtlebot-simulator-student/simulation/gazebo/gazebo_sim_nav/gazebo_sim_nav
 ```
 
 2. Create the **nav_loop.py** 
-3. Complete this file such as the created node user naviagation action to send a goal and check if the goal is reached or not (follow the recommandation here http://wiki.ros.org/navigation/Tutorials/SendingSimpleGoals)
+3. Complete this file such as the created node user naviagation action to send a goal and check if the goal is reached or not (follow the recommandation here https://automaticaddison.com/how-to-send-goals-to-the-ros-2-navigation-stack-nav2/ and here https://navigation.ros.org/commander_api/index.html)
 4. the point A should have the following configuration
 ```
 {'header':{'frame_id':'map'},'pose':{'position':{'x':-0.1222,'y':-5.526},'orientation':{'z':0,'w':1}}}
@@ -64,6 +56,8 @@ roscd turtlebot_gazebo/scripts
 ```
 {'header':{'frame_id':'map'},'pose':{'position':{'x':6.45,'y':-5.526},'orientation':{'z':1,'w':0}}}
 ```
+
+Tips: Do not forget to update the `console_scripts` in the `setup.py`.
 
 ## 4. Play with DWA Local Planner
 
