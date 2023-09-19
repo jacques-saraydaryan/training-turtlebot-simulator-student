@@ -39,6 +39,7 @@ def generate_launch_description():
 
     # Create the launch configuration variables
     slam = LaunchConfiguration('slam')
+    #pose2 = LaunchConfiguration('pose2')
     namespace = LaunchConfiguration('namespace')
     use_namespace = LaunchConfiguration('use_namespace')
     map_yaml_file = LaunchConfiguration('map')
@@ -74,6 +75,11 @@ def generate_launch_description():
                   ('/tf_static', 'tf_static')]
 
     # Declare the launch arguments
+    #declare_pose2_cmd = DeclareLaunchArgument(
+    #    'pose2',
+    #    default_value=pose,
+    #    description='Top-level namespace')
+
     declare_namespace_cmd = DeclareLaunchArgument(
         'namespace',
         default_value='',
@@ -92,7 +98,7 @@ def generate_launch_description():
     declare_map_yaml_cmd = DeclareLaunchArgument(
         'map',
         default_value=os.path.join(
-            gazebo_sim_nav_dir, 'maps', 'js_custom_map_local.yaml'),
+            gazebo_sim_nav_dir, 'maps', 'js_custom_map_local2.yaml'),
         description='Full path to map file to load')
 
     declare_use_sim_time_cmd = DeclareLaunchArgument(
@@ -102,7 +108,7 @@ def generate_launch_description():
 
     declare_params_file_cmd = DeclareLaunchArgument(
         'params_file',
-        default_value=os.path.join(bringup_dir, 'params', 'nav2_params.yaml'),
+        default_value=os.path.join(bringup_dir, 'params', 'nav2_params_local.yaml'),
         description='Full path to the ROS2 parameters file to use for all launched nodes')
 
     declare_autostart_cmd = DeclareLaunchArgument(
@@ -149,7 +155,7 @@ def generate_launch_description():
         #              https://github.com/ROBOTIS-GIT/turtlebot3_simulations/issues/91
         # default_value=os.path.join(get_package_share_directory('turtlebot3_gazebo'),
         # worlds/turtlebot3_worlds/waffle.model')
-        default_value=os.path.join(gazebo_sim_nav_dir, 'worlds', 'js_world_room_local2.model'),
+        default_value=os.path.join(gazebo_sim_nav_dir, 'worlds', 'js_world_room_local2bis.model'),
         description='Full path to world model file to load')
 
     declare_robot_name_cmd = DeclareLaunchArgument(
@@ -190,6 +196,7 @@ def generate_launch_description():
                      'robot_description': robot_description}],
         remappings=remappings)
 
+    #print(pose2)
     start_gazebo_spawner_cmd = Node(
         package='gazebo_ros',
         executable='spawn_entity.py',
@@ -227,6 +234,7 @@ def generate_launch_description():
 
     # Declare the launch options
     ld.add_action(declare_namespace_cmd)
+    #ld.add_action(declare_pose2_cmd)
     ld.add_action(declare_use_namespace_cmd)
     ld.add_action(declare_slam_cmd)
     ld.add_action(declare_map_yaml_cmd)
