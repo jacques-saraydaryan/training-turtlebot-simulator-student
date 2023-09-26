@@ -19,7 +19,7 @@ Most of navigation concepts come from ROS1 also have a look to
 -->
 [![Nav2](https://img.youtube.com/vi/QB7lOKp3ZDQ/0.jpg)](https://www.youtube.com/watch?v=QB7lOKp3ZDQ "Nav2")
 
-- The global Nav2 Architecture can be summerize in the following picture:
+- The global Nav2 Architecture can be summarized in the following picture:
 
 
 <img src="https://ros2-industrial-workshop.readthedocs.io/en/latest/_images/navigation_overview.png" alt="ROS1 Navigation Stack" width=""/>
@@ -28,7 +28,7 @@ Most of navigation concepts come from ROS1 also have a look to
 
 ## 1. Start Simulation and Mapping
 ### 1.1. Start simulator for mapping
-- Follow the instructions provided in the section **Start Simlation for mapping** of the [readme.md](./readme.md).
+- Follow the instructions provided in the section **Start Simulation for mapping** of the [readme.md](./readme.md).
 ### 1.2. Configure Rviz 
 - Configure Rviz to see the following:
   - Map generated (topic `/map`)
@@ -77,7 +77,7 @@ Most of navigation concepts come from ROS1 also have a look to
 ## 2. Start simulation env.
 
 
-- Follow the instructions provided in the section **Start Simlation for navigation** of the [readme.md](./readme.md).
+- Follow the instructions provided in the section **Start Simulation for navigation** of the [readme.md](./readme.md).
 
 - Check that in the env. is correctly load into gazebo (env. plus robot).
 
@@ -168,7 +168,7 @@ velocity_smoother:
 
 ### 2.1 Test default configuration
 
-- Try to ask a navigation throught riz
+- Try to ask a navigation through riz
     1. Relocate the robot using the **2D Pose Estimate** tool
     1. Ask goal with the **2D Nav Goal** tool
 
@@ -215,7 +215,7 @@ global_costmap:
 > - [Static layer](https://navigation.ros.org/configuration/packages/costmap-plugins/static.html)
 > - [Inflation layer](https://navigation.ros.org/configuration/packages/costmap-plugins/inflation.html)
 
-Restart your simulation for navigation and try a new navigation order through Rviz.
+Restart your simulation for navigation and try a new navigation order through rviz.
 
  Display the **/global_costmap/costmap** into rviz.
 
@@ -422,7 +422,7 @@ In gazebo, add an obstacle in front of the robot (visible by the laser).
 
 
 ### 4.5bis Order of layers
-- change the order of layers into the confiration file like following:
+- change the order of layers into the configuration file like following:
 
 ```yaml
   ...
@@ -431,7 +431,7 @@ In gazebo, add an obstacle in front of the robot (visible by the laser).
 ```
 > - Make the test again has explain in 4.5, What happens ? Why ?
 
-- Reset your configuration file to be again in the following conifguration 
+- Reset your configuration file to be again in the following configuration 
 
 ```yaml
   ...
@@ -630,7 +630,7 @@ local_costmap:
 
 For a good configuration of the 3D sensor, you must adjust the parameters of the **VoxelCostmapPlugin**. Have a look to the [ROS navigation tuning guide](http://kaiyuzheng.me/documents/navguide.pdf), page 13 to get more detail about Voxel. For Nav2 parameters references you see the following page [Nav2 Voxel Layer]()
 
-- In a nutsheel the following picture sumup Voxel parameters:
+- In a nutshell, the following picture sums up Voxel parameters:
 
 <img src="./img/voxel_layer.png" alt="Nav2d Voxel Layer" width="100%"/>
 
@@ -649,7 +649,7 @@ Ask the robot to navigate behind the table.
 
 # BehaviorTree
 ## Overview
-- Nav2 use behavior tree to define the robot reaction during navigation. Behavior trees define an organisation of reactions depending of contextual information.
+- Nav2 use behavior tree to define the robot reaction during navigation. Behavior trees define an organization of reactions depending of contextual information.
 - More information is available here [https://www.behaviortree.dev/docs/category/learn-the-basic-concepts](https://www.behaviortree.dev/docs/category/learn-the-basic-concepts)
 
 - In behavior tree, we distinguish different type of nodes (quote of the upper link):
@@ -671,36 +671,84 @@ Ask the robot to navigate behind the table.
 
   - Below some explanations of both standard BTree Nodes and Nav2 specific Nodes:
 
-    - `PipelineSequence` : PipeLine sequence acts as a standard `Sequence Node` meaning as soon as a Child Node is successfull the next (right) sliding Node is triggered. `Pipeline Sequence` is successfull only if all children are successfull. The difference is that each time a node is successfull it remains active and still check the condition. If a failure occurs all nodes are stopped and `Pipeline Sequence` state becomes failure too.
+    - `Sequence`: A Sequence Node needs to get all its children successful to be successful. When triggered, the first left child is executed, in case of success the sibling right node is then executed and so on. If one children nodes reach failure status Sequence Node returns failure.
+
+    <img src="./img/BTTreeS.png" alt="Default Nav2 Behavior Tree" width="80%" style="display: block; margin: 0 auto"/>
+
+
+    - `ReactiveSequence`: The Reactive Sequence execute the first left child.  In case of success, the next right sibling node is executed, but the first one remains active. If the second node reaches successful state the Reactive Sequence return success. If the first child, still active, return a failure state, the second node is haled and the Reactive Sequence return failure.
+    
+    <img src="./img/BTTreeRS.png" alt="Default Nav2 Behavior Tree" width="80%" style="display: block; margin: 0 auto"/>
+
+    - `ReactiveFallback`: The Reactive Fallback Node try to execute a "main" node. In cas of failure a sibling node is triggered but the "main" node remains active. In case of success of the second node the Reactive Fallback Node status becomes successful. In case of success of the "main" node still active, the second node would be stopped and the Reactive Fallback Node status becomes successful.
+
+
+    <img src="./img/BTTreeRF.png" alt="Default Nav2 Behavior Tree" width="80%" style="display: block; margin: 0 auto"/>
+
+    - `PipelineSequence` (NAV2): PipeLine sequence acts as a standard `Sequence Node` meaning as soon as a Child Node is successful the next (right) sliding Node is triggered. `Pipeline Sequence` is successful only if all children are successful. The difference is that each time a node is successful it remains active and still check the condition. If a failure occurs all nodes are stopped and `Pipeline Sequence` state becomes failure too.
 
     <img src="./img/BTTreePS.png" alt="Default Nav2 Behavior Tree" width="80%" style="display: block; margin: 0 auto"/>
     
 
-    - `NodeRecovery`: The Node recovery aims at playing the first node until it succeded of a number of try is reached. A second sliding nobe is played in case of failure of the first one and then the "main" node is played again.
+    - `NodeRecovery` (NAV2): The Node recovery aims at playing the first node until it succeed of a number of try is reached. A second sliding node is played in case of failure of the first one and then the "main" node is played again.
 
-    - `RandRobin`: the RandRobin node successively triggers it children until one is in success. It then memorise the last successfull node and the next time the RandRobin Node is called, it will trigger the slibing node of the last sucessfull node 
-<img src="./img/BTTreeRN.png" alt="Default Nav2 Behavior Tree" width="80%" style="display: block; margin: 0 auto"/>
+    <img src="./img/BTTreeRN.png" alt="Default Nav2 Behavior Tree" width="80%" style="display: block; margin: 0 auto"/>
+
+    - `RandRobin` (NAV2): the RandRobin node successively triggers it children (e.g A1,A2,A3,A4) until one is in success. It then memorize the last successful node (e.g A3) and the next time the RandRobin Node is called, it will trigger the sibling node (A4) of the last successful node.
+
+
+## Navigation Behavior Tree
+
+  - Read again the default Behavior tree `navigate_through_poses_w_replanning_and_recovery`.
+  > - Explain how it works when everything is ok.
+  > - What happens if the `ComputePathThroughPoses` fails ?
+  > - What happens if the `ComputePathThroughPoses` fails (only one time)?
+  > - What happens if the `ComputePathThroughPoses` fails despite the first recovery ?
+  > - What happens if the `ComputePathThroughPoses` fails despite the second recovery ?
+
+
+  - Open the Behavior tree `navigate_basic.xml` available in the `behavior_tree` folder
+
+    ```xml
+    <root main_tree_to_execute="MainTree">
+    <BehaviorTree ID="MainTree">
+    <PipelineSequence name="NavigateWithReplanning">
+      
+      <DistanceController distance="1.0">
+        <ComputePathToPose goal="{goal}" path="{path}"/>
+      </DistanceController>
+
+      <FollowPath path="{path}"/>
     
-<!-- 
-the ReactiveFallback is a type of fallback node in the navigation2 (nav2) behavior tree library. It is used to handle reactive behaviors in the robot's navigation stack.
+    </PipelineSequence>
+  </BehaviorTree>
+</root>
+    ```
 
-In a behavior tree, the fallback node executes its children nodes one by one until it finds a child that succeeds. However, in the case of reactive behaviors, the outcome of a child node may change over time based on new information or events.
+  > - Explain the given behavior tree
+  > - Change the `distance` attribute to `10.0`
+  > - Change the parameter `default_nav_through_poses_bt_xml` in the `nav2_params_local.yaml` file to `<your local path>/src/training-turtlebot-simulator-student/simulation/gazebo/gazebo_sim_nav/behavior_tree/navigate_basic.xml``
+  > - Run the simulator and explain the new behavior
+  > `̀ ` ros2 launch gazebo_sim_nav tb3_simulation_local_launch.py headless:=False params_file:="nav2_params_BT.yaml" `̀ `
 
-The ReactiveFallback node is designed to handle such scenarios by allowing the execution of the failed child to be delayed until new information is available. It does this by storing the state of the failed children and retrying them if a reactive event occurs.
 
-Here's an example to explain the usage of ReactiveFallback:
 
-Suppose a robot is navigating autonomously in an environment using a behavior tree. The robot has various navigation behaviors like obstacle avoidance, goal following, and path planning. Each of these behaviors is represented by a child node in the behavior tree.
+  - Tips: you can follow what happened in the behaviour tree of the Nav2 by monitoring log of behavior tree as follows:
 
-The ReactiveFallback node is placed at the top-level in the behavior tree. It has three children nodes: ObstacleAvoidance, GoalFollowing, and PathPlanning.
+  ```
+  ros2 topic echo /behavior_tree_log | grep -A2 node_name
+  
+  ```
 
-Initially, the GoalFollowing node is running because the robot has a target destination. However, during the execution of GoalFollowing, an obstacle is detected by the robot's sensors. At this point, the GoalFollowing node fails.
 
-Now, instead of immediately executing the next child node (ObstacleAvoidance) in the ReactiveFallback, the ReactiveFallback node remembers the state of the failed child (GoalFollowing). It waits for a reactive event, such as obstacle clearance, before retrying the failed child.
+  > - Update the behavior with a `Sequence Node` that triggers a `Spin Action` and rotate the robot of 360 degress if the FollowPath is successful
+  > - Run the simulator and explain the new behavior
 
-Once the obstacle is cleared, the ReactiveFallback node notices the change in the environment and retries the failed GoalFollowing node. If the GoalFollowing node succeeds this time, the ReactiveFallback continues executing its children nodes from the point where the retry happened.
 
-If the robot encounters another failed child node, the ReactiveFallback again retries it after a reactive event occurs.
+  > - Add a `Recovery Node` that `clear the LocalCost Map` if the `FollowPath Action` failed (Try 3 times)
+  > - Run the simulator and explain the new behavior
 
-In summary, the ReactiveFallback node in nav2 behavior tree is useful when dealing with reactive behaviors that may change over time due to external factors. It allows the robot to delay the execution of failed child nodes until new information or events occur, ensuring optimal navigation performance.
--->
+
+  > - Update the behavior to clean both Local and the global costmap if the first recovery do not work.
+  > - Run the simulator and explain the new behavior
+
