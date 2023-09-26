@@ -645,3 +645,62 @@ In gazebo, add a table obstacle in front of the robot.
 Ask the robot to navigate behind the table.
 
 > What happened ? why ?
+
+
+# BehaviorTree
+## Overview
+- Nav2 use behavior tree to define the robot reaction during navigation. Behavior trees define an organisation of reactions depending of contextual information.
+- More information is available here [https://www.behaviortree.dev/docs/category/learn-the-basic-concepts](https://www.behaviortree.dev/docs/category/learn-the-basic-concepts)
+
+- In behavior tree, we distinguish different type of nodes (quote of the upper link):
+  - `ControleNode` : Start a child node based on the result of its siblings or/and its own state.
+  - `DecoratorNode`: It may alter the result of its Node child or tick it multiple times.
+  - `ConditionNode`: (leaf) Should not alter the system. Shall not return RUNNING.
+  - `ActionNode`: (leaf) This is the Node that "does something"
+
+- Below you can show one of the default behavoir tree used in Nav2.
+
+<img src="./img/BTTreeCustom2.png" alt="Default Nav2 Behavior Tree" width="100%"/>
+
+  - This Tree shows one default behavior available in the Nav2 package (here the `navigate_through_poses_w_replanning_and_recovery ` default behavior Tree). In this BTree the following information is found:
+    - The Control Node in pink 
+    - The Decorator Node in blue
+    - The Action Node in white
+
+  - Most of Node are standard BehaviorTree as definied in (https://www.behaviortree.dev/docs/category/nodes-library)[https://www.behaviortree.dev/docs/category/nodes-library], but Nav2 defines specific behavior nodes like `PipelineSequence`, `NodeRecovery`, `RecoveryRoundRobin` (detail information can be found here [https://navigation.ros.org/behavior_trees/overview/nav2_specific_nodes.html](https://navigation.ros.org/behavior_trees/overview/nav2_specific_nodes.html)). The Nodes list is available here [https://navigation.ros.org/configuration/packages/configuring-bt-xml.html](https://navigation.ros.org/configuration/packages/configuring-bt-xml.html)
+
+  - Below some explanations of both standard BTree Nodes and Nav2 specific Nodes:
+
+    - `PipelineSequence` : PipeLine sequence acts as a standard `Sequence Node` meaning as soon as a Child Node is successfull the next (right) sliding Node is triggered. `Pipeline Sequence` is successfull only if all children are successfull. The difference is that each time a node is successfull it remains active and still check the condition. If a failure occurs all nodes are stopped and `Pipeline Sequence` state becomes failure too.
+
+    <img src="./img/BTTreePS.png" alt="Default Nav2 Behavior Tree" width="80%" style="display: block; margin: 0 auto"/>
+    
+
+    - `NodeRecovery`: The Node recovery aims at playing the first node until it succeded of a number of try is reached. A second sliding nobe is played in case of failure of the first one and then the "main" node is played again.
+
+    - `RandRobin`: the RandRobin node successively triggers it children until one is in success. It then memorise the last successfull node and the next time the RandRobin Node is called, it will trigger the slibing node of the last sucessfull node 
+<img src="./img/BTTreeRN.png" alt="Default Nav2 Behavior Tree" width="80%" style="display: block; margin: 0 auto"/>
+    
+<!-- 
+the ReactiveFallback is a type of fallback node in the navigation2 (nav2) behavior tree library. It is used to handle reactive behaviors in the robot's navigation stack.
+
+In a behavior tree, the fallback node executes its children nodes one by one until it finds a child that succeeds. However, in the case of reactive behaviors, the outcome of a child node may change over time based on new information or events.
+
+The ReactiveFallback node is designed to handle such scenarios by allowing the execution of the failed child to be delayed until new information is available. It does this by storing the state of the failed children and retrying them if a reactive event occurs.
+
+Here's an example to explain the usage of ReactiveFallback:
+
+Suppose a robot is navigating autonomously in an environment using a behavior tree. The robot has various navigation behaviors like obstacle avoidance, goal following, and path planning. Each of these behaviors is represented by a child node in the behavior tree.
+
+The ReactiveFallback node is placed at the top-level in the behavior tree. It has three children nodes: ObstacleAvoidance, GoalFollowing, and PathPlanning.
+
+Initially, the GoalFollowing node is running because the robot has a target destination. However, during the execution of GoalFollowing, an obstacle is detected by the robot's sensors. At this point, the GoalFollowing node fails.
+
+Now, instead of immediately executing the next child node (ObstacleAvoidance) in the ReactiveFallback, the ReactiveFallback node remembers the state of the failed child (GoalFollowing). It waits for a reactive event, such as obstacle clearance, before retrying the failed child.
+
+Once the obstacle is cleared, the ReactiveFallback node notices the change in the environment and retries the failed GoalFollowing node. If the GoalFollowing node succeeds this time, the ReactiveFallback continues executing its children nodes from the point where the retry happened.
+
+If the robot encounters another failed child node, the ReactiveFallback again retries it after a reactive event occurs.
+
+In summary, the ReactiveFallback node in nav2 behavior tree is useful when dealing with reactive behaviors that may change over time due to external factors. It allows the robot to delay the execution of failed child nodes until new information or events occur, ensuring optimal navigation performance.
+-->
