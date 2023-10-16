@@ -5,7 +5,10 @@
 
 
 # Start configuration
-
+- Configure your ROS to communicate only on localhost
+```
+export ROS_LOCALHOST_ONLY=1
+```  
 - Some issues as been identified with default dss use cyclonedds instead
 ```
 export RMW_IMPLEMENTATION=rmw_cyclonedds_cpp
@@ -17,6 +20,7 @@ source /opt/ros/humble/setup.bash
 export TURTLEBOT3_MODEL=waffle
 export GAZEBO_MODEL_PATH=$GAZEBO_MODEL_PATH:/opt/ros/humble/share/turtlebot3_gazebo/models
 ```
+- Tips : Save all these commands into your `~/.bashrc` file
 
 # Start Simlation for mapping
 
