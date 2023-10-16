@@ -316,7 +316,7 @@ local_costmap:
       plugins: ["obstacle_layer"]
       obstacle_layer:
         plugin: "nav2_costmap_2d::ObstacleLayer"
-        enabled: False
+        enabled: True
         combination_method: 1
         observation_sources: scan
         scan:
@@ -383,7 +383,7 @@ local_costmap:
       plugins: ["obstacle_layer","inflation_layer"]
       obstacle_layer:
         plugin: "nav2_costmap_2d::ObstacleLayer"
-        enabled: False
+        enabled: True
         combination_method: 1
         observation_sources: scan
         scan:
@@ -500,7 +500,7 @@ global_costmap:
       ##### New Section #####
       obstacle_layer:
         plugin: "nav2_costmap_2d::ObstacleLayer"
-        enabled: False
+        enabled: True
         combination_method: 1
         observation_sources: scan
         scan:
@@ -620,7 +620,7 @@ local_costmap:
       inflation_layer:
         plugin: "nav2_costmap_2d::InflationLayer"
         cost_scaling_factor: 3.0
-        inflation_radius: 0.55simulation/gazebo/gazebo_sim_nav/readme.md
+        inflation_radius: 0.55
       static_layer:
         plugin: "nav2_costmap_2d::StaticLayer"
         map_subscribe_transient_local: True
