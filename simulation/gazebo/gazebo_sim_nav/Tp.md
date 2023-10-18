@@ -236,6 +236,22 @@ Need a capure of rqt reconfigure here
 
 Play with different values to see the impact on the **/global_costmap/costmap**
 
+Tips: in some cases Rqt-reconfigure does not update parameters in this, try to set parameters through command lines:
+- List available params:
+```
+ros2 param list
+```
+
+- Get value of one param:
+```
+ros2 param get global_costmap/global_costmap inflation_layer.inflation_radius 
+```
+
+- Set value of one param:
+
+```
+ros2 param set global_costmap/global_costmap inflation_layer.inflation_radius 1.5 
+```
 
 Try to make plan into the map through the make_plan service (move_base package) to see the influence of the parameter variations
 
