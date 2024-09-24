@@ -172,8 +172,8 @@ amcl:
 bt_navigator:
   ros__parameters:
     use_sim_time: True
-    default_nav_through_poses_bt_xml: "/home/jsaraydaryan/ros/ros_training_ws/src/training-turtlebot-simulator-student/simulation/gazebo/gazebo_sim_nav/behavior_tree/navigate_basic.xml"
-    default_nav_to_pose_bt_xml: "/home/jsaraydaryan/ros/ros_training_ws/src/training-turtlebot-simulator-student/simulation/gazebo/gazebo_sim_nav/behavior_tree/navigate_basic.xml"
+    default_nav_through_poses_bt_xml: "../behavior_tree/navigate_basic.xml"
+    default_nav_to_pose_bt_xml: "../behavior_tree/navigate_basic.xml"
     global_frame: map
     robot_base_frame: base_link
     odom_topic: /odom

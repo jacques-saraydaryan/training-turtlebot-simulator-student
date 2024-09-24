@@ -32,7 +32,7 @@ ros2 launch gazebo_sim_nav tb3_simulation_local_launch.py headless:=True params_
     1. Relocate the robot using the **2D Pose Estimate** tool if needed
     1. Ask goal with the **2D Nav Goal** tool
 
->  - What means the green path ?
+>  - What means the path with arrows path ?
 > -  What means the blue path ?
 
 
@@ -46,7 +46,7 @@ cd src/training-turtlebot-simulator-student/simulation/gazebo/gazebo_sim_nav/gaz
 ```
 
 2. Create the **nav_loop.py** 
-3. Complete this file such as the created node user naviagation action to send a goal and check if the goal is reached or not (follow the recommandation  here https://navigation.ros.org/commander_api/index.html)
+3. Complete this file such as the created node use `BasicNavigator` to send a goal and check if the goal is reached or not (follow the recommandation  here [https://docs.nav2.org/commander_api/index.html](https://docs.nav2.org/commander_api/index.html))
 4. the point A should have the following configuration
 ```
 {'header':{'frame_id':'map'},'pose':{'position':{'x':-0.1222,'y':-5.526},'orientation':{'z':0,'w':1}}}
@@ -62,7 +62,7 @@ Tips: Do not forget to update the `console_scripts` in the `setup.py`.
 ## 4. Play with DWA Local Planner
 
 In the following section, the different DWA parameters are studied.
-For each different env. configuration the following parameters have to be updated (detailed information is available here [https://navigation.ros.org/configuration/packages/configuring-dwb-controller.html](https://navigation.ros.org/configuration/packages/configuring-dwb-controller.html))
+For each different env. configuration the following parameters have to be updated (detailed information is available here [https://docs.nav2.org/configuration/packages/configuring-dwb-controller.html](https://docs.nav2.org/configuration/packages/configuring-dwb-controller.html))
 - PathDist.scale
 - GoalDist.scale
 - PathAlign.scale
