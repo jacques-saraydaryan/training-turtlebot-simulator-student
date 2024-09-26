@@ -1,4 +1,62 @@
 # ROS Navigation Tutorial: Local Planner
+## Before Starting
+
+### Start configuration
+#### For simulator install only 
+  - If Simulator is not installed check prerequisite of [install and use](./readme.md).
+
+#### Download the training package
+  - If you haven't got a ros workspace, create one
+    ```
+       mkdir -p ~/ros_ws/src
+       cd ~/ros_ws
+       colcon build
+    ```
+  - Clone the current repository into the src of your workspace
+    ```
+      cd ~/ros_ws/src
+      git clone https://github.com/jacques-saraydaryan/training-turtlebot-simulator-student.git
+    ```
+  - Compile the new ros package
+    ```
+      cd ~/ros_ws
+      colcon build
+    ```
+  - source the current ros workspace
+    ```
+        cd ~/ros_ws
+        source install/setup.bash
+    ```
+
+#### Setup Env.
+- CAUTION Before all commands you launch, you need to setup the following Ros variable
+  - Configure your ROS to communicate only on localhost
+    ```
+    export ROS_LOCALHOST_ONLY=1
+    ```  
+  - Some issues as been identified with default dss use cyclonedds instead
+    ```
+    export RMW_IMPLEMENTATION=rmw_cyclonedds_cpp
+    ```
+  - set default end directory 
+
+    ```
+    source /opt/ros/humble/setup.bash
+    export TURTLEBOT3_MODEL=waffle
+    export GAZEBO_MODEL_PATH=$GAZEBO_MODEL_PATH:/opt/ros/humble/share/turtlebot3_gazebo/models
+    ```
+- Tips : Save all these commands into your `~/.bashrc` file
+
+#### Start simulation for Navigation
+- CAUTION: Before all commands be sure to Setup Env. as above
+- Launch Gazebo, Localization, navigation and tools.
+
+  ```
+  cd src/training-turtlebot-simulator-student/simulation/gazebo/gazebo_sim_nav/params/
+  ros2 launch gazebo_sim_nav tb3_simulation_launch.py headless:=False params_file:="nav2_params_empty.yaml" map:="<your absolute map path>/<your map>.yaml"
+  ```
+
+- On rviz set "2d pose estimate" 
 
 ## 1. Introduction
 
@@ -73,7 +131,7 @@ For each different env. configuration the following parameters have to be update
 - Start the dynamic configuration edition with the following command:
   
   ```
-  rosrun rqt_reconfigure rqt_reconfigure
+  ros2 run rqt_reconfigure rqt_reconfigure
   ```
 - In the following window, select only **contoller_server**
 - all presented parameters can be modified and modifications are automatically apply to the current planner
