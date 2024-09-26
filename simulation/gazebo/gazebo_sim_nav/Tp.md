@@ -1,13 +1,86 @@
 # ROS Navigation Tutorial
 
-## 0. Introduction
+## Before Starting
+
+
+### Start configuration
+#### For simulator install only 
+  - If Simulator is not installed check prerequisite of [install and use](./readme.md).
+
+#### Download the training package
+  - If you haven't got a ros workspace, create one
+    ```
+       mkdir -p ~/ros_ws/src
+       cd ~/ros_ws
+       colcon build
+    ```
+  - Clone the current repository into the src of your workspace
+    ```
+      cd ~/ros_ws/src
+      git clone https://github.com/jacques-saraydaryan/training-turtlebot-simulator-student.git
+    ```
+  - Compile the new ros package
+    ```
+      cd ~/ros_ws
+      colcon build
+    ```
+  - source the current ros workspace
+    ```
+        cd ~/ros_ws
+        source install/setup.bash
+    ```
+
+#### Setup Env.
+- CAUTION Before all commands you launch, you need to setup the following Ros variable
+  - Configure your ROS to communicate only on localhost
+    ```
+    export ROS_LOCALHOST_ONLY=1
+    ```  
+  - Some issues as been identified with default dss use cyclonedds instead
+    ```
+    export RMW_IMPLEMENTATION=rmw_cyclonedds_cpp
+    ```
+  - set default end directory 
+
+    ```
+    source /opt/ros/humble/setup.bash
+    export TURTLEBOT3_MODEL=waffle
+    export GAZEBO_MODEL_PATH=$GAZEBO_MODEL_PATH:/opt/ros/humble/share/turtlebot3_gazebo/models
+    ```
+- Tips : Save all these commands into your `~/.bashrc` file
+
+#### Start simulation for Mapping
+- CAUTION: Before all commands be sure to Setup Env. as above
+- Launch simulator without navigation (if too much resources are used by gazebo try to launch without GUI with `headless:=False`)
+  ```
+  ros2 launch gazebo_sim_nav tb3_simulation_without_nav_launch.py headless:=False
+  ```
+- Launch Slam for mapping
+  ```
+  ros2 launch slam_toolbox online_async_launch.py
+  ```
+- Teleop your robot for mapping
+  ```
+  ros2 run teleop_twist_keyboard teleop_twist_keyboard
+  ```
+#### Start simulation for Navigation
+- CAUTION: Before all commands be sure to Setup Env. as above
+- Launch Gazebo, Localization, navigation and tools.
+
+  ```
+  cd src/training-turtlebot-simulator-student/simulation/gazebo/gazebo_sim_nav/params/
+  ros2 launch gazebo_sim_nav tb3_simulation_launch.py headless:=False params_file:="nav2_params_empty.yaml" map:="<your absolute map path>/<your map>.yaml"
+  ```
+
+- On rviz set "2d pose estimate" 
+## 0 Introduction
 
 The following document presents an incremental overview of the different ROS configuration files and parameters used in Ros Navigation Package.
 Before starting have a look to the following resources:
- - ROS [Nav2](https://navigation.ros.org/) documentation
- - ROS [Nav2 general concepts](https://navigation.ros.org/concepts/index.html) documentation
- - ROS [Nav2 costmap_2d](https://navigation.ros.org/configuration/packages/configuring-costmaps.html) documentation
- - ROS [Nav2 costmap_2d github](https://navigation.ros.org/configuration/packages/configuring-costmaps.html) package
+ - ROS [Nav2](https://docs.nav2.org/) documentation
+ - ROS [Nav2 general concepts](https://docs.nav2.org/concepts/index.html) documentation
+ - ROS [Nav2 costmap_2d](https://docs.nav2.org//configuration/packages/configuring-costmaps.html) documentation
+ - ROS [Nav2 costmap_2d github](https://github.com/ros-navigation/navigation2/blob/main/nav2_costmap_2d/README.md) package
 
 Most of navigation concepts come from ROS1 also have a look to 
  - ROS wiki page of [Basic Navigation Tuning Guide](http://wiki.ros.org/navigation/Tutorials/Navigation%20Tuning%20Guide)
@@ -28,7 +101,7 @@ Most of navigation concepts come from ROS1 also have a look to
 
 ## 1. Start Simulation and Mapping
 ### 1.1. Start simulator for mapping
-- Follow the instructions provided in the section **Start Simulation for mapping** of the [readme.md](./readme.md).
+- Follow the instructions provided in the section **Before Starting/Start configuration/Start simulation for Mapping**.
 ### 1.2. Configure Rviz 
 - Configure Rviz to see the following:
   - Map generated (topic `/map`)
@@ -46,7 +119,7 @@ Most of navigation concepts come from ROS1 also have a look to
   > - What happened when your robot tries to map a long corridor ? Explain
 
 ### 1.4 Map files
-  - After mapping some rooms, save your map with the following command (you can see references here [https://navigation.ros.org/tutorials/docs/navigation2_with_slam.html](https://navigation.ros.org/tutorials/docs/navigation2_with_slam.html)):
+  - After mapping some rooms, save your map with the following command (you can see references here [https://docs.nav2.org/tutorials/docs/navigation2_with_slam.html](https://docs.nav2.org//tutorials/docs/navigation2_with_slam.html)):
 
   ```
     ros2 run nav2_map_server map_saver_cli -f ~/map
@@ -77,7 +150,7 @@ Most of navigation concepts come from ROS1 also have a look to
 ## 2. Start simulation env.
 
 
-- Follow the instructions provided in the section **Start Simulation for navigation** of the [readme.md](./readme.md).
+- Follow the instructions provided in the section **Before Starting/Start configuration/Start Simulation for navigation**.
 
 - Check that in the env. is correctly load into gazebo (env. plus robot).
 
@@ -184,7 +257,7 @@ velocity_smoother:
 
 
 ### 3.2 Add an inflate layer
-In the configuration file **nav2_params_inflate.yaml**, define an inflate layer (follow documentation in [https://navigation.ros.org/configuration/packages/costmap-plugins/inflation.html](https://navigation.ros.org/configuration/packages/costmap-plugins/inflation.html)) as follow:
+In the configuration file **nav2_params_inflate.yaml**, define an inflate layer (follow documentation in [https://docs.nav2.org/configuration/packages/costmap-plugins/inflation.html](https://docs.nav2.org/configuration/packages/costmap-plugins/inflation.html)) as follow:
 ```yaml
 global_costmap:
   global_costmap:
@@ -212,8 +285,8 @@ global_costmap:
 > Find the definition of each parameter:
 > - Global parameters:
 >    - robot_radius : radius of the robot use to compute cost into inflate layer (refer to inscribed_radius)
-> - [Static layer](https://navigation.ros.org/configuration/packages/costmap-plugins/static.html)
-> - [Inflation layer](https://navigation.ros.org/configuration/packages/costmap-plugins/inflation.html)
+> - [Static layer](https://docs.nav2.org/configuration/packages/costmap-plugins/static.html)
+> - [Inflation layer](https://docs.nav2.org/configuration/packages/costmap-plugins/inflation.html)
 
 Restart your simulation for navigation and try a new navigation order through rviz.
 
@@ -351,7 +424,7 @@ local_costmap:
       always_send_full_costmap: True
 ```
 - 
->Find the definition of each parameter ([ROS2 Nav2](https://navigation.ros.org/configuration/packages/costmap-plugins/obstacle.html),[ROS1 obstacle layer](http://wiki.ros.org/costmap_2d/hydro/obstacles)):
+>Find the definition of each parameter ([ROS2 Nav2](https://docs.nav2.org/configuration/packages/costmap-plugins/obstacle.html),[ROS1 obstacle layer](http://wiki.ros.org/costmap_2d/hydro/obstacles)):
 > - obstacle_layer:
 >  - combination_method
 >    - track_unknown_space
@@ -683,7 +756,7 @@ Ask the robot to navigate behind the table.
     - The Decorator Node in blue
     - The Action Node in white
 
-  - Most of Node are standard BehaviorTree as definied in (https://www.behaviortree.dev/docs/category/nodes-library)[https://www.behaviortree.dev/docs/category/nodes-library], but Nav2 defines specific behavior nodes like `PipelineSequence`, `NodeRecovery`, `RecoveryRoundRobin` (detail information can be found here [https://navigation.ros.org/behavior_trees/overview/nav2_specific_nodes.html](https://navigation.ros.org/behavior_trees/overview/nav2_specific_nodes.html)). The Nodes list is available here [https://navigation.ros.org/configuration/packages/configuring-bt-xml.html](https://navigation.ros.org/configuration/packages/configuring-bt-xml.html)
+  - Most of Node are standard BehaviorTree as definied in (https://www.behaviortree.dev/docs/category/nodes-library)[https://www.behaviortree.dev/docs/category/nodes-library], but Nav2 defines specific behavior nodes like `PipelineSequence`, `NodeRecovery`, `RecoveryRoundRobin` (detail information can be found here [https://docs.nav2.org/behavior_trees/overview/nav2_specific_nodes.html](https://docs.nav2.org/behavior_trees/overview/nav2_specific_nodes.html)). The Nodes list is available here [https://docs.nav2.org/configuration/packages/configuring-bt-xml.html](https://docs.nav2.org/configuration/packages/configuring-bt-xml.html)
 
   - Below some explanations of both standard BTree Nodes and Nav2 specific Nodes:
 
