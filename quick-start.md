@@ -2,10 +2,9 @@
 
 - Fix your repo directory
 ```
-export TRAINING_NAV=/home/jacques.saraydaryan/project/cours/robotic/training-turtlebot-simulator-student
-export TRAINING_NAV=<Your training-turtlebot-simulator-student Path>
+    export TRAINING_NAV=<Your training-turtlebot-simulator-student Path>
 ```
-
+ros2 run nav2_map_server map_saver_cli -f ~/map
 - Other more complete command
     ```
         ros2 launch nav2_bringup tb4_simulation_launch.py headless:=False params_file:="$TRAINING_NAV/simulation/gazebo/gazebo_sim_nav/params/nav2_baseline_params.yaml" map:="$TRAINING_NAV/simulation/gazebo/gazebo_sim_nav/maps/js_custom_map_local2.yaml" world:="$TRAINING_NAV/simulation/gazebo/gazebo_sim_nav/worlds/baseline.world" x_pose:=0 y_pose:=0 z_pose:=0
@@ -20,8 +19,9 @@ export TRAINING_NAV=<Your training-turtlebot-simulator-student Path>
 - /worlds : set of worlds for simulation into gazebo
 - /maps: set of maps corresponding to the different simulated worlds. Allow to do navigation
 - /params: set of param files especially for navigation purpose. all different configuration for the navigation are set here
+- /behavior_tree: set of Behavior tree  description used for robot navigation strategy
 
-# Prerequistes
+# Prerequistes (if not already installed)
 - cyclonedds
 ```
    sudo apt install ros-jazzy-rmw-cyclonedds-cpp
@@ -44,18 +44,18 @@ export TRAINING_NAV=<Your training-turtlebot-simulator-student Path>
 # Start configuration
 - Configure your ROS to communicate only on localhost
 ```
-export ROS_LOCALHOST_ONLY=1
+    export ROS_LOCALHOST_ONLY=1
 ```  
 - Some issues as been identified with default dss use cyclonedds instead
 ```
-export RMW_IMPLEMENTATION=rmw_cyclonedds_cpp
+    export RMW_IMPLEMENTATION=rmw_cyclonedds_cpp
 ```
 - set default end directory 
 
 ```
-source /opt/ros/jazzy/setup.bash
-export TURTLEBOT3_MODEL=waffle
-export GAZEBO_MODEL_PATH=$GAZEBO_MODEL_PATH:/opt/ros/jazzy/share/turtlebot3_gazebo/models
+    source /opt/ros/jazzy/setup.bash
+    export TURTLEBOT3_MODEL=waffle
+    export GAZEBO_MODEL_PATH=$GAZEBO_MODEL_PATH:/opt/ros/jazzy/share/turtlebot3_gazebo/models
 ```
 - Tips : Save all these commands into your `~/.bashrc` file
 
@@ -66,15 +66,11 @@ export GAZEBO_MODEL_PATH=$GAZEBO_MODEL_PATH:/opt/ros/jazzy/share/turtlebot3_gaze
 ```
 
 ```
-ros2 launch gazebo_sim_nav tb3_simulation_without_nav_launch.py headless:=False
+    ros2 launch nav2_bringup tb4_simulation_launch.py headless:=False slam:=True  world:="$TRAINING_NAV/training-nav2-overview/worlds/baseline.world" x_pose:=0 y_pose:=0 z_pose:=0
 ```
 
 ```
-ros2 launch slam_toolbox online_async_launch.py
-```
-
-```
-ros2 run teleop_twist_keyboard teleop_twist_keyboard
+    ros2 run teleop_twist_keyboard teleop_twist_keyboard
 ```
 
 # Start Simlation for navigation
@@ -87,7 +83,7 @@ ros2 run teleop_twist_keyboard teleop_twist_keyboard
 
 
 ```
-    ros2 launch nav2_bringup tb4_simulation_launch.py headless:=False params_file:="$TRAINING_NAV/simulation/gazebo/gazebo_sim_nav/params/nav2_params_empty.yaml" map:="<your absolute map path>/<your map>.yaml" world:="$TRAINING_NAV/simulation/gazebo/gazebo_sim_nav/worlds/baseline.world" x_pose:=0 y_pose:=0 z_pose:=0
+    ros2 launch nav2_bringup tb4_simulation_launch.py headless:=False params_file:="$TRAINING_NAV/training-nav2-overview/params/nav2_params_empty.yaml" map:="<your absolute map path>/<your map>.yaml" world:="$TRAINING_NAV/training-nav2-overview/worlds/baseline.world" x_pose:=0 y_pose:=0 z_pose:=0
 ```
 
 - On rviz set "2d pose estimate" 
