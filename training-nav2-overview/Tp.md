@@ -655,7 +655,7 @@ Display the PointCloud2 of the **/camera/depth/points** topic into rviz.
 ### 7.3 Add a source of observation
 
 Go into the **nav2_params_3D_local_global_obstacle.yaml** configuration file and add a new `voxel` costmap layer:
-
+/home/tp/ros_ws/src/training-turtlebot-simulator-student/simulation/gazebo/gazebo_sim_nav
 ```yaml
 local_costmap:
   local_costmap:
@@ -740,7 +740,7 @@ Ask the robot to navigate behind the table.
 # BehaviorTree
 ## Overview
 - Nav2 use behavior tree to define the robot reaction during navigation. Behavior trees define an organization of reactions depending of contextual information.
-- More information is available here [https://www.behaviortree.dev/docs/category/learn-the-basic-concepts](https://www.behaviortree.dev/docs/category/learn-the-basic-concepts)
+- More information is available here [https://www.behaviortree.dev/docs/learn-the-basics/BT_basics](https://www.behaviortree.dev/docs/learn-the-basics/BT_basics)
 
 - In behavior tree, we distinguish different type of nodes (quote of the upper link):
   - `ControleNode` : Start a child node based on the result of its siblings or/and its own state.
@@ -788,19 +788,18 @@ Ask the robot to navigate behind the table.
 
 
 ## Navigation Behavior Tree
+- Read again the default Behavior tree `navigate_through_poses_w_replanning_and_recovery`.
+> - Explain how it works when everything is ok.
+> - What happens if the `ComputePathThroughPoses` fails ?
+> - What happens if the `ComputePathThroughPoses` fails (only one time)?
+> - What happens if the `ComputePathThroughPoses` fails despite the first recovery ?
+> - What happens if the `ComputePathThroughPoses` fails despite the second recovery ?
 
-  - Read again the default Behavior tree `navigate_through_poses_w_replanning_and_recovery`.
-  > - Explain how it works when everything is ok.
-  > - What happens if the `ComputePathThroughPoses` fails ?
-  > - What happens if the `ComputePathThroughPoses` fails (only one time)?
-  > - What happens if the `ComputePathThroughPoses` fails despite the first recovery ?
-  > - What happens if the `ComputePathThroughPoses` fails despite the second recovery ?
 
-
-  - Open the Behavior tree `navigate_basic.xml` available in the `behavior_tree` folder
+- Open the Behavior tree `navigate_basic.xml` available in the `behavior_tree` folder
 
     ```xml
-    <root main_tree_to_execute="MainTree">
+    <root main_tree_to_execute="MainTree" BTCPP_format="4">
     <BehaviorTree ID="MainTree">
     <PipelineSequence name="NavigateWithReplanning">
       
@@ -815,15 +814,14 @@ Ask the robot to navigate behind the table.
 </root>
     ```
 
-  > - Explain the given behavior tree
-  > - Change the `distance` attribute to `10.0`
-  > - Change the parameter `default_nav_through_poses_bt_xml` in the `nav2_params_local.yaml` file to `<your local path>/src/training-turtlebot-simulator-student/simulation/gazebo/gazebo_sim_nav/behavior_tree/navigate_basic.xml``
-  > - Run the simulator and explain the new behavior
-  > `̀ ` ros2 launch gazebo_sim_nav tb3_simulation_local_launch.py headless:=False params_file:="nav2_params_BT.yaml" `̀ `
-
-
-
-  - Tips: you can follow what happened in the behaviour tree of the Nav2 by monitoring log of behavior tree as follows:
+> - Explain the given behavior tree
+> - Change the `distance` attribute to `10.0`
+> - Change the parameter `default_nav_through_poses_bt_xml` in the `nav2_params_BT.yaml` file to `<your local path>/training-nav2-overview/behavior_tree/navigate_basic.xml`
+> - Run the simulator and explain the new behavior
+`̀ ` 
+  ros2 launch gazebo_sim_nav tb3_simulation_local_launch.py headless:=False params_file:="nav2_params_BT.yaml" 
+`̀ `
+- Tips: you can follow what happened in the behaviour tree of the Nav2 by monitoring log of behavior tree as follows:
 
   ```
   ros2 topic echo /behavior_tree_log | grep -A2 node_name
@@ -831,14 +829,14 @@ Ask the robot to navigate behind the table.
   ```
 
 
-  > - Update the behavior with a `Sequence Node` that triggers a `Spin Action` and rotate the robot of 360 degress if the FollowPath is successful
-  > - Run the simulator and explain the new behavior
+ > - Update the behavior with a `Sequence Node` that triggers a `Spin Action` and rotate the robot of 360 degress if the FollowPath is successful
+> - Run the simulator and explain the new behavior
 
 
-  > - Add a `Recovery Node` that `clear the LocalCost Map` if the `FollowPath Action` failed (Try 3 times)
-  > - Run the simulator and explain the new behavior
+> - Add a `Recovery Node` that `clear the LocalCost Map` if the `FollowPath Action` failed (Try 3 times)
+> - Run the simulator and explain the new behavior
 
 
-  > - Update the behavior to clean both Local and the global costmap if the first recovery do not work.
-  > - Run the simulator and explain the new behavior
+> - Update the behavior to clean both Local and the global costmap if the first recovery do not work.
+> - Run the simulator and explain the new behavior
 

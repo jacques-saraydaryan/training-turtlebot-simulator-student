@@ -1,14 +1,11 @@
-<root main_tree_to_execute="MainTree">
+<root main_tree_to_execute="MainTree" BTCPP_format="4">
   <BehaviorTree ID="MainTree">
-    <PipelineSequence name="NavigateWithReplanning">
-      
-      <DistanceController distance="1.0">
+      <PipelineSequence name="NavigateWithReplanning">
+      <DistanceController distance="5.0">
         <ComputePathToPose goal="{goal}" path="{path}"/>
       </DistanceController>
 
-      <FollowPath path="{path}"/>
-    
-    
-    </PipelineSequence>
+      <FollowPath path="{path}"/>  
+      </PipelineSequence>    
   </BehaviorTree>
 </root>
