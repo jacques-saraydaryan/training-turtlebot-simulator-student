@@ -1,6 +1,17 @@
 <?xml version="1.0"?>
 <sdf version='1.7'>
   <world name='default'>
+    <include>
+      <uri>
+        https://fuel.gazebosim.org/1.0/OpenRobotics/models/Ground Plane
+      </uri>
+    </include>
+
+    <include>
+      <uri>
+        https://fuel.gazebosim.org/1.0/OpenRobotics/models/Sun
+      </uri>
+    </include>
     <model name='ground_plane'>
       <static>1</static>
       <link name='link'>
