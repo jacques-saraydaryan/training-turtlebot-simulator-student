@@ -51,7 +51,7 @@
 
 #### Start simulation for Mapping
 - CAUTION: Before all commands be sure to Setup Env. as above
-- Launch simulator without navigation (if too much resources are used by gazebo try to launch without GUI with `headless:=False`)
+- Launch simulator without navigation (if you want to see gazebo GUI add `headless:=False`)
   ```
   export TRAINING_NAV=<Your training-turtlebot-simulator-student Path>
   ```

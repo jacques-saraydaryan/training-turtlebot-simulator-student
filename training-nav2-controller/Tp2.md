@@ -17,16 +17,7 @@
       cd ~/ros_ws/src
       git clone https://github.com/jacques-saraydaryan/training-turtlebot-simulator-student.git
     ```
-  - Compile the new ros package
-    ```
-      cd ~/ros_ws
-      colcon build
-    ```
-  - source the current ros workspace
-    ```
-        cd ~/ros_ws
-        source install/setup.bash
-    ```
+
 
 #### Setup Env.
 - CAUTION Before all commands you launch, you need to setup the following Ros variable
@@ -49,10 +40,17 @@
 
 #### Start simulation for Navigation
 - CAUTION: Before all commands be sure to Setup Env. as above
-- Launch Gazebo, Localization, navigation and tools.
-
+- Launch simulator without navigation (if you want to see gazebo GUI add `headless:=False`)
   ```
-  cd src/training-turtlebot-simulator-student/simulation/gazebo/gazebo_sim_nav/params/
+  export TRAINING_NAV=<Your training-turtlebot-simulator-student Path>
+  ```
+  ```
+  ros2 launch nav2_bringup tb4_simulation_launch.py headless:=False params_file:="$TRAINING_NAV/training-nav2-controller/params/nav2_params_local_DWB.yaml" map:="$TRAINING_NAV/training-nav2-controller/maps/base_line_local.yaml" world:="$TRAINING_NAV/training-nav2-controller/worlds/baseline_for_local_planner.sdf" x_pose:=0.0 y_pose:=0.0 z_pose:=0
+  ```
+  
+
+
+
   ros2 launch gazebo_sim_nav tb3_simulation_launch.py headless:=False params_file:="nav2_params_empty.yaml" map:="<your absolute map path>/<your map>.yaml"
   ```
 
@@ -150,13 +148,13 @@ The planner would be tested into the following areas:
 
 - the point A :
 ```
-{'header':{'frame_id':'map'},'pose':{'position':{'x':-15.4,'y':-5.27},'orientation':{'z':0,'w':1}}}
+{'header':{'frame_id':'map'},'pose':{'position':{'x':-15,'y':-5.12},'orientation':{'z':0,'w':1}}}
 ```
 
   - the point B :
 
 ```
-{'header':{'frame_id':'map'},'pose':{'position':{'x':-10.8,'y':-5.27},'orientation':{'z':1,'w':0}}}
+{'header':{'frame_id':'map'},'pose':{'position':{'x':-12.1,'y':-5.12},'orientation':{'z':1,'w':0}}}
 ```
 
 - Change the parameter **GoalDist.scale** by **10.0** value
@@ -183,13 +181,13 @@ The planner would be tested into the following areas:
 
 - the point A :
 ```
-{'header':{'frame_id':'map'},'pose':{'position':{'x':-0.1222,'y':-5.526},'orientation':{'z':0,'w':1}}}
+{'header':{'frame_id':'map'},'pose':{'position':{'x':-0.14,'y':-5.53},'orientation':{'z':0,'w':1}}}
 ```
 
   - the point B :
 
 ```
-{'header':{'frame_id':'map'},'pose':{'position':{'x':6.45,'y':-5.526},'orientation':{'z':1,'w':0}}}
+{'header':{'frame_id':'map'},'pose':{'position':{'x':4.43,'y':-5.53},'orientation':{'z':1,'w':0}}}
 ```
 - Restore your DWA initial configuration
 
@@ -219,13 +217,13 @@ The planner would be tested into the following areas:
 
 - the point A :
 ```
-{'header':{'frame_id':'map'},'pose':{'position':{'x':-15.6,'y':8.92},'orientation':{'z':0,'w':1}}}
+{'header':{'frame_id':'map'},'pose':{'position':{'x':-15.4,'y':9.27},'orientation':{'z':0,'w':1}}}
 ```
 
   - the point B :
 
 ```
-{'header':{'frame_id':'map'},'pose':{'position':{'x':--13.1,'y':8.92},'orientation':{'z':1,'w':0}}}
+{'header':{'frame_id':'map'},'pose':{'position':{'x':--13,'y':9.27},'orientation':{'z':1,'w':0}}}
 ```
 - Restore your DWA initial configuration
 
@@ -257,13 +255,13 @@ The planner would be tested into the following areas:
 
 - the point A :
 ```
-{'header':{'frame_id':'map'},'pose':{'position':{'x':-6.09,'y':-5.57},'orientation':{'z':1,'w':0}}}
+{'header':{'frame_id':'map'},'pose':{'position':{'x':-6.61,'y':-5.39},'orientation':{'z':1,'w':0}}}
 ```
 
   - the point B :
 
 ```
-{'header':{'frame_id':'map'},'pose':{'position':{'x':-3.15,'y':-5.57},'orientation':{'z':0,'w':1}}}
+{'header':{'frame_id':'map'},'pose':{'position':{'x':-2.76,'y':-5.39},'orientation':{'z':0,'w':1}}}
 ```
 - Restore your DWA initial configuration
 
@@ -274,8 +272,26 @@ The planner would be tested into the following areas:
 - Find the optimal parameter configuration for this situation
 
 
-## 5. Play with TED Local Planner
-coming soon...
+## 5. Play with MPPI Local Planner
+- Stop the simulator and start it again with the following configuration
+
+```
+  ros2 launch nav2_bringup tb4_simulation_launch.py headless:=False params_file:="$TRAINING_NAV/training-nav2-controller/params/nav2_params_local_MPPI.yaml" map:="$TRAINING_NAV/training-nav2-controller/maps/base_line_local.yaml" world:="$TRAINING_NAV/training-nav2-controller/worlds/baseline_for_local_planner.sdf" x_pose:=0.0 y_pose:=0.0 z_pose:=0
+```
+
+- In the following section, the different MPPI parameters are studied.
+For each different env. configuration the following parameters have to be updated (detailed information is available here [https://docs.nav2.org/configuration/packages/configuring-mppic.html#mppi-parameters](https://docs.nav2.org/configuration/packages/configuring-mppic.html#mppi-parameters))
+  - batch_size
+  - time_steps
+  - model_dt
+  - Constraint Critic
+  - Goal Critic
+  - Obstacles Critic
+  - Path Align Critic
+  - Path Follow Critic
+  - Prefer Forward Critic
+
+
 
 ## 6. Create your own local Planner
 coming soon...
