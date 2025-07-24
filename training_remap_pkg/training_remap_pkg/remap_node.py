@@ -5,6 +5,8 @@ from std_msgs.msg import String
 from geometry_msgs.msg import Twist
 
 import time;
+import signal
+import sys
 
 
 class RemapNode(Node):
@@ -13,14 +15,12 @@ class RemapNode(Node):
     def __init__(self):
         super().__init__('remapper_node')
         self.is_shutdown=False
-        
+        signal.signal(signal.SIGINT, self.signal_handler)
            # init params
         self.declare_parameter('input_topic', '/cmd_vel_fake' )
         input_topic_resolution = self.get_parameter('input_topic').get_parameter_value().string_value
-        
-        self.context.on_shutdown(self.on_shutdown_callback)
 
-        self.declare_parameter('output_topic','/cmd_vel_smoothed' )
+        self.declare_parameter('output_topic','/cmd_vel' )
         param_output_topic = self.get_parameter('output_topic').get_parameter_value().string_value
 
         self.get_logger().info(f'-------------------------------------------')
@@ -44,11 +44,7 @@ class RemapNode(Node):
             self.get_logger().debug(f'Node shutdown..')
             self.publish_stop()
             self.get_logger().debug(f'publish_stop into Callback')
-            
-    def on_shutdown_callback(self):
-        self.get_logger().debug(f'publish_stop into on_shutdown_callback')
-        self.publish_stop()
-        
+                    
     def publish_stop(self):
         #Publish emty twist for stopping the robot
         twist_zero = Twist()       
@@ -59,25 +55,36 @@ class RemapNode(Node):
         
         self.publisher_.publish(twist_zero)
         rclpy.spin_once(self)
+        
+    def signal_handler(self, signum, frame):
+        self.get_logger().info('Received SIGINT (Ctrl-C), publishing final message...')
+        self.is_shutdown = True
+        time.sleep(0.5)
+        self.publish_stop()
+        time.sleep(3)
+        rclpy.shutdown()
+        sys.exit(0)
+        
 
 
 def main(args=None):
     rclpy.init(args=args)
 
     remap_node = RemapNode()
-    try:
-        rclpy.spin(remap_node)
-        remap_node.is_shutdown =True
-        #remap_node.publish_stop()
-        #remap_node.get_logger().debug(f'publish_stop into Try')
-    except KeyboardInterrupt:
-        remap_node.is_shutdown =True
-    finally:
-        remap_node.is_shutdown =True
-        remap_node.get_logger().debug(f'publish_stop into Finally')
-        time.sleep(3)
-        rclpy.try_shutdown()
-        remap_node.destroy_node()
+    rclpy.spin(remap_node)
+    #try:
+    #    rclpy.spin(remap_node)
+    #    remap_node.is_shutdown =True
+    #    #remap_node.publish_stop()
+    #    #remap_node.get_logger().debug(f'publish_stop into Try')
+    #except KeyboardInterrupt:
+    #    remap_node.is_shutdown =True
+    #finally:
+    #    remap_node.is_shutdown =True
+    #    remap_node.get_logger().debug(f'publish_stop into Finally')
+    #    time.sleep(3)
+    #    rclpy.try_shutdown()
+    #    remap_node.destroy_node()
         
 
 
