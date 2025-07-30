@@ -321,6 +321,8 @@ For each different env. configuration the following parameters have to be update
 ## 6. Create your own local Planner
 coming soon...
 
+
+<!-- 
 ## 7. Gazebo Tips:
 Depending of your configuration, some parameters should be ajusted to get the current world correctly running.
 - Click on **physics** field:
@@ -333,7 +335,7 @@ Depending of your configuration, some parameters should be ajusted to get the cu
 
   (more information is available at [http://gazebosim.org/tutorials/?tut=modifying_world](http://gazebosim.org/tutorials/?tut=modifying_world)
 
-
+-->
   
 
 
