@@ -48,13 +48,13 @@
   ros2 launch nav2_bringup tb4_simulation_launch.py headless:=False params_file:="$TRAINING_NAV/training-nav2-controller/params/nav2_params_local_DWB.yaml" map:="$TRAINING_NAV/training-nav2-controller/maps/base_line_local.yaml" world:="$TRAINING_NAV/training-nav2-controller/worlds/baseline_for_local_planner.sdf" x_pose:=0.0 y_pose:=0.0 z_pose:=0
   ```
   
-
-
-
-  ros2 launch gazebo_sim_nav tb3_simulation_launch.py headless:=False params_file:="nav2_params_empty.yaml" map:="<your absolute map path>/<your map>.yaml"
-  ```
-
 - On rviz set "2d pose estimate" 
+
+- Start the Mapper node to send command to simulated robot
+
+  ```
+  ros2 run training_remap_pkg remapper --ros-args -p input_topic:=/cmd_vel_fake -p output_topic:=/cmd_vel
+  ```
 
 ## 1. Introduction
 
@@ -74,10 +74,6 @@ Example of expected result:
 
 
 - Follow the instructions provided in the section **Start Simlation for navigation**.
-```
-cd src/training-turtlebot-simulator-student/simulation/gazebo/gazebo_sim_nav/params/
-ros2 launch gazebo_sim_nav tb3_simulation_local_launch.py headless:=True params_file:="nav2_params_local.yaml"
-```
 
 - Check that in the env. is correctly load into gazebo (env. plus robot).
 
@@ -291,6 +287,35 @@ For each different env. configuration the following parameters have to be update
   - Path Follow Critic
   - Prefer Forward Critic
 
+
+- Tips : 
+  - In order to see trajectories add the related markers inside Rviz
+  - To see the trajectories and the selected trajectories on a given situation, do not hesitate to stop the `training_remap_pkg remapper` node
+
+### 5.1 MPPI Controller parameters
+- Based on the tests carried out with DWA, vary the parameters relating to the MPPI controller (batch_size, time_steps, model_dt) in order to observe the impact on the proposed trajectories.
+- Provide screenshots showing the impact of these parameters.
+
+
+### 5.2 Critic parameters
+
+### 5.2.1 Obstacle/Cost Critics
+- Based on the tests carried out with DWA, vary the parameters relating to the `obstacle` and `cost` critics in order to observe the impact on the proposed trajectories.
+- Provide screenshots showing the impact of these parameters.
+
+### 5.2.2 Path Critics
+- Based on the tests carried out with DWA, vary the parameters relating to the `Path Align`, `Path Angle` and `Path Follow` critics in order to observe the impact on the proposed trajectories.
+- Provide screenshots showing the impact of these parameters.
+
+
+### 5.2.3 Goal Critics
+- Based on the tests carried out with DWA, vary the parameters relating to the `Goal`, `Goal Angle` critics in order to observe the impact on the proposed trajectories.
+- Provide screenshots showing the impact of these parameters.
+
+
+### 5.2.4 Behavior Critics
+- Based on the tests carried out with DWA, vary the parameters relating to the `Constraint`, `Prefer Forward` and `Twirling` critics in order to observe the impact on the proposed trajectories.
+- Provide screenshots showing the impact of these parameters.
 
 
 ## 6. Create your own local Planner
