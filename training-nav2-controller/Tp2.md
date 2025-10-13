@@ -32,9 +32,9 @@
   - set default end directory 
 
     ```
-    source /opt/ros/humble/setup.bash
+    source /opt/ros/jazzy/setup.bash
     export TURTLEBOT3_MODEL=waffle
-    export GAZEBO_MODEL_PATH=$GAZEBO_MODEL_PATH:/opt/ros/humble/share/turtlebot3_gazebo/models
+    export GAZEBO_MODEL_PATH=$GAZEBO_MODEL_PATH:/opt/ros/jazzy/share/turtlebot3_gazebo/models
     ```
 - Tips : Save all these commands into your `~/.bashrc` file
 
@@ -60,10 +60,10 @@
 
 The following document presents an incremental overview of the different ROS  controller server configuration (old local planner configuration )
 Before starting have a look to the following resources:
- - ROS 2 [Nav2 Controller Server](https://navigation.ros.org/configuration/packages/configuring-controller-server.html)
- - ROS [Nav2 general concepts](https://navigation.ros.org/concepts/index.html) documentation
- - ROS [Nav2 costmap_2d](https://navigation.ros.org/configuration/packages/configuring-costmaps.html) documentation
- - ROS [Nav2 costmap_2d github](https://navigation.ros.org/configuration/packages/configuring-costmaps.html) package
+ - ROS 2 [Nav2 Controller Server](https://docs.nav2.org/configuration/packages/configuring-controller-server.html)
+ - ROS 2 [Nav2 general concepts](https://docs.nav2.org/concepts/) documentation
+ - ROS [Nav2 costmap_2d](https://docs.nav2.org/configuration/packages/configuring-costmaps.html) documentation
+ - ROS [Nav2 costmap_2d github](https://github.com/ros-navigation/navigation2/tree/main/nav2_costmap_2d) package
 
 Example of expected result:
 
@@ -92,9 +92,9 @@ Example of expected result:
 
 To test the different configuration of local planner, we will first create a node **nav_loop.py** allowing the robot to reach the point A, and when reached go to the B pt. When the pt B is reached robot needs to navigation again to the point A.
 
-1. Go to the following folder
+1. Create a new package nav_loop
 ```
-cd src/training-turtlebot-simulator-student/simulation/gazebo/gazebo_sim_nav/gazebo_sim_nav
+ros2 pkg create --build-type ament_python --license Apache-2.0 --node-name nav_loop nav_loop
 ```
 
 2. Create the **nav_loop.py** 
