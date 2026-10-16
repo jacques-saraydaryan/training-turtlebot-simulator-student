@@ -4,75 +4,42 @@
 
 
 ### Start configuration
-#### For simulator install only 
-  - If Simulator is not installed check prerequisite of [install and use](../quick-start.md).
-
-#### Download the training package
-  - If you haven't got a ros workspace, create one
+#### Docker container of the course
+  - Set up the environment by following the Docker guide **[SETUP_TP.md](https://gitlab.com/cpelyon/rob_ressources/ros2_cuda_gazebo.docker/-/blob/main/SETUP_TP.md)** (steps 0 to 4): Docker image, workspace, submission repository, container launch.
+    - Do **not** `git clone` this repository: add it to your submission repository with `git subtree add` (guide, step 2, `tp_nav`).
+    - Everything is already installed in the container and the ROS environment is already set (`RMW_IMPLEMENTATION=rmw_cyclonedds_cpp`, ROS limited to your machine, `TURTLEBOT3_MODEL=waffle`): no `apt install` or `export` needed.
+  - Launch the container from the root of your workspace, and run it again to open other terminals in the same container:
     ```
-       mkdir -p ~/ros_ws/src
-       cd ~/ros_ws
-       colcon build
+    ./run_tp.sh
     ```
-  - Clone the current repository into the src of your workspace
+  - In the container, compile your workspace:
     ```
-      cd ~/ros_ws/src
-      git clone https://github.com/jacques-saraydaryan/training-turtlebot-simulator-student.git
+    cd /root/student_ws
+    colcon build --symlink-install
+    source install/setup.bash
     ```
-  - Compile the new ros package
+  - Path of this training repository in the container (to set in each new terminal):
     ```
-      cd ~/ros_ws
-      colcon build
+    export TRAINING_NAV=/root/student_ws/src/training-turtlebot-simulator-student
     ```
-  - source the current ros workspace
-    ```
-        cd ~/ros_ws
-        source install/setup.bash
-    ```
-
-#### Setup Env.
-- CAUTION Before all commands you launch, you need to setup the following Ros variable
-  - Configure your ROS to communicate only on localhost
-    ```
-    export ROS_LOCALHOST_ONLY=1
-    ```  
-  - Some issues as been identified with default dss use cyclonedds instead
-    ```
-    export RMW_IMPLEMENTATION=rmw_cyclonedds_cpp
-    ```
-  - set default end directory 
-
-    ```
-    source /opt/ros/jazzy/setup.bash
-    export TURTLEBOT3_MODEL=waffle
-    export GAZEBO_MODEL_PATH=$GAZEBO_MODEL_PATH:/opt/ros/jazzy/share/turtlebot3_gazebo/models
-    ```
-- Tips : Save all these commands into your `~/.bashrc` file
+  - Only `/root/student_ws` is kept when the container stops: save your maps and files there.
 
 #### Start simulation for Mapping
-- CAUTION: Before all commands be sure to Setup Env. as above
 - Launch simulator without navigation (if you want to see gazebo GUI add `headless:=False`)
-  ```
-  export TRAINING_NAV=<Your training-turtlebot-simulator-student Path>
-  ```
   
   ```
   ros2 launch nav2_bringup tb4_simulation_launch.py headless:=False slam:=True  world:="$TRAINING_NAV/training-nav2-overview/worlds/baseline.world" x_pose:=0 y_pose:=0 z_pose:=0
+  ```
 
-- Teleop your robot for mapping
+- Teleop your robot for mapping (in another terminal: `./run_tp.sh`)
   ```
   ros2 run teleop_twist_keyboard teleop_twist_keyboard
   ```
 #### Start simulation for Navigation
-- CAUTION: Before all commands be sure to Setup Env. as above
 - Launch Gazebo, Localization, navigation and tools.
 
-  ```
-    export TRAINING_NAV=<Your training-turtlebot-simulator-student Path>
-  ```
-
  ```
-    ros2 launch nav2_bringup tb4_simulation_launch.py headless:=False params_file:="$TRAINING_NAV/training-nav2-overview/params/nav2_params_empty.yaml" map:="<your absolute map path>/<your map>.yaml" world:="$TRAINING_NAV/training-nav2-overview/worlds/baseline.world" x_pose:=0 y_pose:=0 z_pose:=0
+    ros2 launch nav2_bringup tb4_simulation_launch.py headless:=False params_file:="$TRAINING_NAV/training-nav2-overview/params/nav2_params_empty.yaml" map:="$TRAINING_NAV/training-nav2-overview/maps/<your map>.yaml" world:="$TRAINING_NAV/training-nav2-overview/worlds/baseline.world" x_pose:=0 y_pose:=0 z_pose:=0
 ```
 
 - On rviz set "2d pose estimate" 
@@ -126,7 +93,8 @@ Most of navigation concepts come from ROS1 also have a look to
   - After mapping some rooms, save your map with the following command (you can see references here [https://docs.nav2.org/tutorials/docs/navigation2_with_slam.html](https://docs.nav2.org//tutorials/docs/navigation2_with_slam.html)):
 
   ```
-    ros2 run nav2_map_server map_saver_cli -f ~/map
+    mkdir -p $TRAINING_NAV/training-nav2-overview/maps
+    ros2 run nav2_map_server map_saver_cli -f $TRAINING_NAV/training-nav2-overview/maps/myMap
   ```
   - 2 files are generated:
     - `myMap.yaml`
@@ -816,11 +784,11 @@ Ask the robot to navigate behind the table.
 
 > - Explain the given behavior tree
 > - Change the `distance` attribute to `10.0`
-> - Change the parameter `default_nav_through_poses_bt_xml` in the `nav2_params_BT.yaml` file to `<your local path>/training-nav2-overview/behavior_tree/navigate_basic.xml`
+> - Change the parameter `default_nav_through_poses_bt_xml` in the `nav2_params_BT.yaml` file to `/root/student_ws/src/training-turtlebot-simulator-student/training-nav2-overview/behavior_tree/navigate_basic.xml`
 > - Run the simulator and explain the new behavior
-`̀ ` 
-  ros2 launch gazebo_sim_nav tb3_simulation_local_launch.py headless:=False params_file:="nav2_params_BT.yaml" 
-`̀ `
+  ```
+  ros2 launch nav2_bringup tb4_simulation_launch.py headless:=False params_file:="$TRAINING_NAV/training-nav2-overview/params/nav2_params_BT.yaml" map:="$TRAINING_NAV/training-nav2-overview/maps/<your map>.yaml" world:="$TRAINING_NAV/training-nav2-overview/worlds/baseline.world" x_pose:=0 y_pose:=0 z_pose:=0
+  ```
 - Tips: you can follow what happened in the behaviour tree of the Nav2 by monitoring log of behavior tree as follows:
 
   ```

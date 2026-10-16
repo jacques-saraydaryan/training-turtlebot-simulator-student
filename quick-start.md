@@ -4,49 +4,23 @@
 - /params: set of param files especially for navigation purpose. all different configuration for the navigation are set here
 - /behavior_tree: set of Behavior tree  description used for robot navigation strategy
 
-# Prerequistes (if not already installed)
-- cyclonedds
+# Environment (Docker container of the course)
+- Set up the environment by following the Docker guide **[SETUP_TP.md](https://gitlab.com/cpelyon/rob_ressources/ros2_cuda_gazebo.docker/-/blob/main/SETUP_TP.md)** (steps 0 to 4): Docker image, workspace, submission repository, container launch.
+  - Do **not** `git clone` this repository: add it to your submission repository with `git subtree add` (guide, step 2, `tp_nav`).
+- Everything is already installed in the container (Nav2, Turtlebot simulation, cyclonedds, image pipeline) and the ROS environment is already set (`RMW_IMPLEMENTATION=rmw_cyclonedds_cpp`, ROS limited to your machine, `TURTLEBOT3_MODEL=waffle`): no `apt install` or `export` needed.
+- Launch the container from the root of your workspace, and run it again to open other terminals in the same container:
 ```
-   sudo apt install ros-jazzy-rmw-cyclonedds-cpp
+    ./run_tp.sh
 ```
-- Nav2
+- In the container, compile your workspace and set the path of this training repository:
 ```
-    sudo apt install ros-jazzy-navigation2
-    sudo apt install ros-jazzy-nav2-bringup
+    cd /root/student_ws
+    colcon build --symlink-install
+    source install/setup.bash
+    export TRAINING_NAV=/root/student_ws/src/training-turtlebot-simulator-student
 ```
-- Turtlebot simulation
-```
-    sudo apt install ros-jazzy-turtlebot3-gazebo
-```
-
-- Tools for PCL
-```
-    sudo apt install ros-jazzy-image-pipeline
-```
-
-# Start configuration
-- Configure your ROS to communicate only on localhost
-```
-    export ROS_LOCALHOST_ONLY=1
-```  
-- Some issues as been identified with default dss use cyclonedds instead
-```
-    export RMW_IMPLEMENTATION=rmw_cyclonedds_cpp
-```
-- set default end directory 
-
-```
-    source /opt/ros/jazzy/setup.bash
-    export TURTLEBOT3_MODEL=waffle
-    export GAZEBO_MODEL_PATH=$GAZEBO_MODEL_PATH:/opt/ros/jazzy/share/turtlebot3_gazebo/models
-```
-- Tips : Save all these commands into your `~/.bashrc` file
 
 # Start Simlation for mapping
-
-```
-    export TRAINING_NAV=<Your training-turtlebot-simulator-student Path>
-```
 
 ```
     ros2 launch nav2_bringup tb4_simulation_launch.py headless:=False slam:=True  world:="$TRAINING_NAV/training-nav2-overview/worlds/baseline.world" x_pose:=0 y_pose:=0 z_pose:=0
@@ -56,17 +30,19 @@
     ros2 run teleop_twist_keyboard teleop_twist_keyboard
 ```
 
+- Save your map in your workspace (anything outside `/root/student_ws` is lost when the container stops):
+```
+    mkdir -p $TRAINING_NAV/training-nav2-overview/maps
+    ros2 run nav2_map_server map_saver_cli -f $TRAINING_NAV/training-nav2-overview/maps/<your map>
+```
+
 # Start Simlation for navigation
 
 - Launch Gazebo, Localization, navigation and tools.
 
-```
-    export TRAINING_NAV=<Your training-turtlebot-simulator-student Path>
-```
-
 
 ```
-    ros2 launch nav2_bringup tb4_simulation_launch.py headless:=False params_file:="$TRAINING_NAV/training-nav2-overview/params/nav2_params_empty.yaml" map:="<your absolute map path>/<your map>.yaml" world:="$TRAINING_NAV/training-nav2-overview/worlds/baseline.world" x_pose:=0 y_pose:=0 z_pose:=0
+    ros2 launch nav2_bringup tb4_simulation_launch.py headless:=False params_file:="$TRAINING_NAV/training-nav2-overview/params/nav2_params_empty.yaml" map:="$TRAINING_NAV/training-nav2-overview/maps/<your map>.yaml" world:="$TRAINING_NAV/training-nav2-overview/worlds/baseline.world" x_pose:=0 y_pose:=0 z_pose:=0
 ```
 
 - On rviz set "2d pose estimate" 

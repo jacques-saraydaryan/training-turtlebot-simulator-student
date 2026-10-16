@@ -5,6 +5,8 @@ turtlebot_simulator
 
 ## Training
 
+- Environment: Docker container of the course, see the guide [SETUP_TP.md](https://gitlab.com/cpelyon/rob_ressources/ros2_cuda_gazebo.docker/-/blob/main/SETUP_TP.md)
+
 - see [Ros Navigation Stack Pratical Work](./training-nav2-overview/Tp.md)
 - see [Ros Navigation Stack Local Planner Pratical Work](./training-nav2-controller/Tp2.md)
 

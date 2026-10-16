@@ -2,55 +2,34 @@
 ## Before Starting
 
 ### Start configuration
-#### For simulator install only 
-  - If Simulator is not installed check prerequisite of [install and use](./readme.md).
-
-#### Download the training package
-  - If you haven't got a ros workspace, create one
+#### Docker container of the course
+  - Set up the environment by following the Docker guide **[SETUP_TP.md](https://gitlab.com/cpelyon/rob_ressources/ros2_cuda_gazebo.docker/-/blob/main/SETUP_TP.md)** (steps 0 to 4): Docker image, workspace, submission repository, container launch.
+    - Do **not** `git clone` this repository: add it to your submission repository with `git subtree add` (guide, step 2, `tp_nav`).
+    - Everything is already installed in the container and the ROS environment is already set (`RMW_IMPLEMENTATION=rmw_cyclonedds_cpp`, ROS limited to your machine, `TURTLEBOT3_MODEL=waffle`): no `apt install` or `export` needed.
+  - Launch the container from the root of your workspace, and run it again to open other terminals in the same container:
     ```
-       mkdir -p ~/ros_ws/src
-       cd ~/ros_ws
-       colcon build
+    ./run_tp.sh
     ```
-  - Clone the current repository into the src of your workspace
+  - In the container, compile your workspace (it builds `training_remap_pkg`):
     ```
-      cd ~/ros_ws/src
-      git clone https://github.com/jacques-saraydaryan/training-turtlebot-simulator-student.git
+    cd /root/student_ws
+    colcon build --symlink-install
+    source install/setup.bash
     ```
-
-
-#### Setup Env.
-- CAUTION Before all commands you launch, you need to setup the following Ros variable
-  - Configure your ROS to communicate only on localhost
+  - Path of this training repository in the container (to set in each new terminal):
     ```
-    export ROS_LOCALHOST_ONLY=1
-    ```  
-  - Some issues as been identified with default dss use cyclonedds instead
+    export TRAINING_NAV=/root/student_ws/src/training-turtlebot-simulator-student
     ```
-    export RMW_IMPLEMENTATION=rmw_cyclonedds_cpp
-    ```
-  - set default end directory 
-
-    ```
-    source /opt/ros/jazzy/setup.bash
-    export TURTLEBOT3_MODEL=waffle
-    export GAZEBO_MODEL_PATH=$GAZEBO_MODEL_PATH:/opt/ros/jazzy/share/turtlebot3_gazebo/models
-    ```
-- Tips : Save all these commands into your `~/.bashrc` file
 
 #### Start simulation for Navigation
-- CAUTION: Before all commands be sure to Setup Env. as above
 - Launch simulator without navigation (if you want to see gazebo GUI add `headless:=False`)
-  ```
-  export TRAINING_NAV=<Your training-turtlebot-simulator-student Path>
-  ```
   ```
   ros2 launch nav2_bringup tb4_simulation_launch.py headless:=False params_file:="$TRAINING_NAV/training-nav2-controller/params/nav2_params_local_DWB.yaml" map:="$TRAINING_NAV/training-nav2-controller/maps/base_line_local.yaml" world:="$TRAINING_NAV/training-nav2-controller/worlds/baseline_for_local_planner.sdf" x_pose:=0.0 y_pose:=0.0 z_pose:=0
   ```
   
 - On rviz set "2d pose estimate" 
 
-- Start the Mapper node to send command to simulated robot
+- Start the Mapper node to send command to simulated robot (in another terminal: `./run_tp.sh`)
 
   ```
   ros2 run training_remap_pkg remapper --ros-args -p input_topic:=/cmd_vel_fake -p output_topic:=/cmd_vel
@@ -92,8 +71,9 @@ Example of expected result:
 
 To test the different configuration of local planner, we will first create a node **nav_loop.py** allowing the robot to reach the point A, and when reached go to the B pt. When the pt B is reached robot needs to navigation again to the point A.
 
-1. Create a new package nav_loop
+1. Create a new package nav_loop in the `src` folder of your workspace (it will be part of your submission repository)
 ```
+cd /root/student_ws/src
 ros2 pkg create --build-type ament_python --license Apache-2.0 --node-name nav_loop nav_loop
 ```
 
