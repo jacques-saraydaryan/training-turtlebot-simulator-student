@@ -50,6 +50,7 @@ The following document presents an incremental overview of the different ROS con
 Before starting have a look to the following resources:
  - ROS [Nav2](https://docs.nav2.org/) documentation
  - ROS [Nav2 general concepts](https://docs.nav2.org/concepts/index.html) documentation
+ - ROS [Nav2 Tuning Guide](https://docs.nav2.org/lyrical/configuration_and_development/tuning_guide/) documentation
  - ROS [Nav2 costmap_2d](https://docs.nav2.org/rolling/configuration_and_development/configuration_guide/core_servers/costmap_2d/) documentation
  - ROS [Nav2 costmap_2d github](https://github.com/ros-navigation/navigation2/blob/main/nav2_costmap_2d/README.md) package
 
