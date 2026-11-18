@@ -608,6 +608,11 @@ Through rviz ask your robot to navigation to another room avoiding the new obsta
 ### 7.2 First Test with 3D obstacle
 Restart your simulation.
 
+Enable the RGPD Point Cloud
+```
+ros2 run depth_image_proc point_cloud_xyz_node --ros-args -r image_rect:=/rgbd_camera/depth_image -r camera_info:=/rgbd_camera/camera_info -r points:=/camera/depth/points
+```
+
 Display the **/local_costmap/costmap** into rviz.
 
 In gazebo, add a table obstacle in front of the robot.
